@@ -6,6 +6,11 @@ function Resource(maxValue, startValue) {
 
 ctor(Resource);
 
+Resource.prototype.canAdd = function(amount) {
+    
+    return (this.currentValue + amount <= this.maxValue)
+}
+
 Resource.prototype.add = function(amount) {
     this.currentValue += amount
 

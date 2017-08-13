@@ -8,6 +8,6 @@ function Resources() {
 
 ctor(Resources);
 
-Resources.prototype.getResource = function(name) {
+Resources.prototype.get = function(name) {
     return this.resources[name]
 }
