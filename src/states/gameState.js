@@ -1,5 +1,8 @@
 function Game() {
     State.call(this);
+
+    this.resources = new Resources()
+
     this.level = null;
     this.cameraOffset = 0;
     this.gameOverPopup = null;
@@ -14,7 +17,7 @@ Game.prototype.enter = function (config) {
     State.prototype.enter.call(this, context);
 
     this.cameraOffset = 0;
-
+    
     this.level = new Level();
     this.level.load(null, this.addToRenderList, this);
 
