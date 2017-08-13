@@ -26,7 +26,7 @@ LightLayer.prototype.render = function(context) {
 
     var oldBlendingMode = this.lightContext.globalCompositeOperation;
 
-    this.lightContext.fillStyle = '#555555';
+    this.lightContext.fillStyle = '#333333';
 
     this.lightContext.fillRect(0, 0, game.width,game.height);
 
@@ -34,36 +34,30 @@ LightLayer.prototype.render = function(context) {
 
     this.lightContext.beginPath()
 
-    var iterations = 10;
+    var iterations = 7;
     
-    var sizeVar = 20;
+    var sizeVar = 50;
 
-    var minSize = 50;
+    var minSize = 20;
 
-    for(var i=1;i<=iterations;i++)
+    for(var i=0;i<=iterations;i++)
     {
-        this.lightContext.globalAlpha = 1/i * 1/i;
+        this.lightContext.globalAlpha = 1/(i+1) * 1/(i+1);
 
         var size = minSize + sizeVar * i;
 
-        var originalSize = minSize + sizeVar * (i-1)
-
         this.lightContext.arc(this.lightingPos.x, this.lightingPos.y, size, 0, Math.PI * 2)
-
-        //this.lightContext.fillRect(this.lightingPos.x - size/2,this.lightingPos.y - originalSize/2,size,originalSize);
-
-        //this.lightContext.fillRect(this.lightingPos.x - originalSize/2,this.lightingPos.y - size/2,originalSize,size);
 
         this.lightContext.fill();
     }
 
-    var range = minSize + (sizeVar) * iterations;
-
     this.lightContext.closePath();
 
-    this.lightContext.fillStyle = '#555555';
+    this.lightContext.fillStyle = '#333333';
 
     this.lightContext.globalAlpha = 1;
+
+    var range = minSize + sizeVar * iterations;
 
     var attenuation = range;
 
@@ -78,7 +72,7 @@ LightLayer.prototype.render = function(context) {
 
             if(distanceSqr > attenuation*attenuation)
             {
-                //this.lightContext.fillRect(obj.x,obj.y,obj.width,obj.height);
+                this.lightContext.fillRect(obj.x,obj.y,obj.width,obj.height);
 
                 return;
             }
@@ -134,7 +128,7 @@ LightLayer.prototype.render = function(context) {
 
     context.globalCompositeOperation = 'overlay';
 
-    context.globalAlpha = 0.5;
+    context.globalAlpha = 0.7;
 
     context.drawImage(this.lightCanvas, 0, 0, game.width, game.height);
 
