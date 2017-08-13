@@ -1,9 +1,9 @@
 function Resources() {
     this.resources = {}
 
-    this.resources.health = new Resources(3,3)
+    this.resources.health = new Resource(3,3)
 
-    this.resources.chalk = new Resources(100,100)
+    this.resources.chalk = new Resource(100,100)
 };
 
 ctor(Resources);

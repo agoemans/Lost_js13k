@@ -14,12 +14,12 @@ module.exports = function(grunt) {
 		watch: {
 			scripts: {
 				files: ['assets/*.txt', '!assets/levels.txt', 'src/**/*.js'],
-				// tasks: ['clean:dev',
-                 //    'concat',
-                 //    'uglify:development',
-                 //    'copy:dev',
-                 //    'clean:compiled',
-                 //    'clean:tmp']
+				tasks: ['clean:dev',
+                    'concat',
+                    'uglify:development',
+                    'copy:dev',
+                    'clean:compiled',
+                    'clean:tmp']
 			}
 		},
 		uglify: {
