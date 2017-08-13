@@ -1,5 +1,8 @@
 function Game() {
     State.call(this);
+
+    this.resources = new Resources()
+
     this.level = null;
     this.cameraOffset = 0;
     this.gameOverPopup = null;
