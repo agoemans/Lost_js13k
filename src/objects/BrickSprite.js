@@ -56,7 +56,7 @@ BrickSprite.prototype.onClickBrick = function (array) {
 
     if(this.nearbyBombs === 0){
         this.hide();
-        this.tileFinder.find(this, array);
+        this.tileFinder.find(this.row, this.col, array);
     }
     else {
         this.image.src = this.altImgSrc;

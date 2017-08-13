@@ -56,7 +56,7 @@ Level.prototype.levelLoaded = function (data) {
     this.tiles = data;
     this.processLevel();
 
-    console.log('tileobj', this.tileObects);
+   // console.log('tileobj', this.tileObects);
 }
 
 Level.prototype.processFileData = function (data) {
@@ -80,20 +80,18 @@ Level.prototype.loadLevel = function (number) {
 };
 
 Level.prototype.processLevel = function () {
-    this.tilesX = this.tiles[0].length;
-    this.tilesY = this.tiles.length;
+    this.tilesX = this.tiles[0].length + 2;
+    this.tilesY = this.tiles.length + 2;
 
-    console.log('this.tiles', this.tiles);
-    /*for (var y = 0; y < this.tilesY; y++) {
+    for (var y = 0; y < this.tilesY; y++) {
         this.tileObects[y] = [];
         for (var x = 0; x < this.tilesX; x++) {
-            // if (x === 0 || x === this.tilesX - 1 || y === 0 || y === this.tilesY - 1)
-                // this.addTile('Y', x, y);
+            if (x === 0 || x === this.tilesX - 1 || y === 0 || y === this.tilesY - 1)
+                this.addTile('Y', x, y);
         }
-    }*/
+    }
 
     for (var y = 0; y < this.tiles.length; y++) {
-        this.tileObects[y] = [];
         var row = this.tiles[y];
         for (var x = 0; x < row.length; x++) {
             var newX = x + this.xOffset;

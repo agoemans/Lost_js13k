@@ -1,14 +1,12 @@
 var tileFinder = (function () {
     var arrayWithNulls = [];
-    function findNullNeighbors(tileObj, tileArray) {
+    function findNullNeighbors(row, col, tileArray) {
         //calculates mines around a box
         // let arrayWithNulls = [];
-        arrayWithNulls.push(tileObj);
-        console.log('findNullNeighbors, original tile', tileObj.row, tileObj.col);
-        console.log('arrayWithNulls in find null neighbros', arrayWithNulls);
+        arrayWithNulls.push([row, col]);
 
         for (var i = 0; i < arrayWithNulls.length; i++) {
-            updateAllDirections(tileObj.row, tileObj.col, tileArray);
+            updateAllDirections(arrayWithNulls[i][0], arrayWithNulls[i][1], tileArray);
         }
 
         // for (var x = 0; x < tileArray.length; x++) {
@@ -29,10 +27,7 @@ var tileFinder = (function () {
         }
         try {
             var tileObj = list[row][col];
-            if (tileObj !== undefined && tileObj.visible && tileObj instanceof BrickSprite) {
-                console.log('what is the tile,', tileObj.nearbyBombs);
-                console.log('what is the tileObj,', tileObj.row, tileObj.col);
-
+            if (tileObj !== undefined && tileObj.visible) {
                 if (tileObj.nearbyBombs === 0) {
                     arrayWithNulls.push([row, col]);
                     arrayWithNulls.shift();
