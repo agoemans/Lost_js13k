@@ -21,6 +21,8 @@ Game.prototype.enter = function (config) {
     this.level = new Level();
     this.level.load(null, this.addToRenderList, this);
 
+    this.lightLayer = new LightLayer(this.level)
+
     gameOverHelper.register(this.showGameOver, this);
 };
 
@@ -46,7 +48,10 @@ Game.prototype.mouseUp = function (x, y) {
     else {
         State.prototype.mouseUp.call(this, x, y);
     }
+}
 
+Game.prototype.mouseMove = function(x,y) {
+    this.lightLayer.setLightSource(x,y)
 }
 
 Game.prototype.leave = function () {
@@ -68,7 +73,10 @@ Game.prototype.render = function (context) {
     }
 
     this.level.render(context);
+
     State.prototype.render.call(this, context);
+
+    this.lightLayer.render(context)
 
     context.setTransform(1, 0, 0, 1, 0, 0);
 };

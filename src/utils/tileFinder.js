@@ -37,8 +37,6 @@ var tileFinder = (function () {
             }
 
         } catch (e) {
-            console.log('this is the row and col', row, col);
-            console.log(e);
         }
     }
 
