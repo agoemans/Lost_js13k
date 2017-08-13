@@ -26,7 +26,7 @@ LightLayer.prototype.render = function(context) {
 
     var oldBlendingMode = this.lightContext.globalCompositeOperation;
 
-    this.lightContext.fillStyle = '#999999';
+    this.lightContext.fillStyle = '#555555';
 
     this.lightContext.fillRect(0, 0, game.width,game.height);
 
@@ -34,13 +34,15 @@ LightLayer.prototype.render = function(context) {
 
     this.lightContext.beginPath()
 
-    for(var i=1;i<=10;i++)
+    var iterations = 10;
+    
+    var sizeVar = 20;
+
+    var minSize = 50;
+
+    for(var i=1;i<=iterations;i++)
     {
-        this.lightContext.globalAlpha = 1/i;
-
-        var sizeVar = 20;
-
-        var minSize = 50;
+        this.lightContext.globalAlpha = 1/i * 1/i;
 
         var size = minSize + sizeVar * i;
 
@@ -52,16 +54,18 @@ LightLayer.prototype.render = function(context) {
 
         //this.lightContext.fillRect(this.lightingPos.x - originalSize/2,this.lightingPos.y - size/2,originalSize,size);
 
-        this.lightContext.fill()
+        this.lightContext.fill();
     }
 
-    this.lightContext.closePath()
+    var range = minSize + (sizeVar) * iterations;
+
+    this.lightContext.closePath();
 
     this.lightContext.fillStyle = '#555555';
 
     this.lightContext.globalAlpha = 1;
 
-    var attenuation = 50;
+    var attenuation = range;
 
     this.level.renderList.forEach(function (obj) {
         if(obj instanceof BrickSprite && obj.visible){
@@ -76,7 +80,7 @@ LightLayer.prototype.render = function(context) {
             {
                 //this.lightContext.fillRect(obj.x,obj.y,obj.width,obj.height);
 
-                //return;
+                return;
             }
 
             points.remove(closest);
