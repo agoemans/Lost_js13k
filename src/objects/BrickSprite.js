@@ -3,6 +3,7 @@ function BrickSprite(config) {
     this.hasBomb = (config.type === 'b');
     this.nearbyBombs = (config.type !== 'b' ? config.type: 1);
     this.altImgSrc = null;
+    this.image.src = (config.type === 'X' ? 'assets/wall_w.png' : 'assets/wall2.png');
     this.isFlagged = false;
     this.canClick = true;
     this.tint = '2277aa';
@@ -11,7 +12,7 @@ function BrickSprite(config) {
     this.row = config.row;
     this.col = config.col;
 
-    console.log('create bricksprite', config.row, config.col);
+    //console.log('create bricksprite', config.row, config.col);
 };
 
 inherit(BrickSprite, Sprite);
