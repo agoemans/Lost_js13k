@@ -26,7 +26,9 @@ LightLayer.prototype.render = function(context) {
 
     var oldBlendingMode = this.lightContext.globalCompositeOperation;
 
-    this.lightContext.fillStyle = '#333333';
+    var ambientColor = '#777777'
+
+    this.lightContext.fillStyle = ambientColor;
 
     this.lightContext.fillRect(0, 0, game.width,game.height);
 
@@ -40,9 +42,11 @@ LightLayer.prototype.render = function(context) {
 
     var minSize = 20;
 
+    var minAlpha = 0.05
+
     for(var i=0;i<=iterations;i++)
     {
-        this.lightContext.globalAlpha = 1/(i+1) * 1/(i+1);
+        this.lightContext.globalAlpha = minAlpha + (1-minAlpha) * 1/(i+1) * 1/(i+1);
 
         var size = minSize + sizeVar * i;
 
@@ -53,13 +57,11 @@ LightLayer.prototype.render = function(context) {
 
     this.lightContext.closePath();
 
-    this.lightContext.fillStyle = '#333333';
+    this.lightContext.fillStyle = ambientColor;
 
     this.lightContext.globalAlpha = 1;
 
-    var range = minSize + sizeVar * iterations;
-
-    var attenuation = range;
+    var attenuation = minSize + sizeVar * iterations;
 
     this.level.renderList.forEach(function (obj) {
         if(obj instanceof BrickSprite && obj.visible){
@@ -83,8 +85,6 @@ LightLayer.prototype.render = function(context) {
 
             points.remove(furthest);
 
-            //points = this.getBestPoints(points, this.lightingPos)
-
             if(!points)
             {
                 return
@@ -100,19 +100,25 @@ LightLayer.prototype.render = function(context) {
 
             this.lightContext.lineTo(points[0].x + (points[0].x - this.lightingPos.x)*distance, points[0].y + (points[0].y - this.lightingPos.y)*distance);
 
-            this.lightContext.lineTo(points[1].x + (points[1].x - this.lightingPos.x)*distance, points[1].y + (points[1].y - this.lightingPos.y)*distance);
+            this.lightContext.lineTo(closest.x + (closest.x - this.lightingPos.x)*distance, closest.y + (closest.y - this.lightingPos.y)*distance);
 
-            this.lightContext.lineTo(points[1].x, points[1].y);
-
-            //this.lightContext.lineTo(closest.x, closest.y)
-
-            //this.lightContext.lineTo(points[0].x, points[0].y);
+            this.lightContext.lineTo(closest.x, closest.y)
 
             this.lightContext.fill()
 
-            this.lightContext.closePath()
+            this.lightContext.moveTo(closest.x ,closest.y);
 
-            //this.lightContext.fillRect(obj.x,obj.y,obj.width,obj.height);
+            this.lightContext.lineTo(points[1].x, points[1].y);
+
+            this.lightContext.lineTo(points[1].x + (points[1].x - this.lightingPos.x)*distance, points[1].y + (points[1].y - this.lightingPos.y)*distance);
+
+            this.lightContext.lineTo(closest.x + (closest.x - this.lightingPos.x)*distance, closest.y + (closest.y - this.lightingPos.y)*distance);
+
+            this.lightContext.lineTo(closest.x, closest.y)
+            
+            this.lightContext.fill()
+
+            this.lightContext.closePath()
 
             var x = obj.x - this.lightingPos.x;
             var y = obj.y - this.lightingPos.y;
@@ -128,67 +134,9 @@ LightLayer.prototype.render = function(context) {
 
     context.globalCompositeOperation = 'overlay';
 
-    context.globalAlpha = 0.7;
-
     context.drawImage(this.lightCanvas, 0, 0, game.width, game.height);
 
     context.globalCompositeOperation = oldBlendingMode;
-}
-
-LightLayer.prototype.getBestPoints = function(points, source)
-{
-    var points = points;
-
-    var closest = this.getClosestPoint(points, this.lightingPos);
-
-    points.remove(closest);
-
-    var furthest = this.getFurthestPoint(points, this.lightingPos);
-
-    points.remove(furthest);
-
-    var closestMag = mathHelper.distance(closest.x, closest.y, source.x, source.y);
-
-    var closestP1Dot = mathHelper.dot(closest.x - source.x, closest.y - source.y, points[0].x - source.x, points[0].y - source.y);
-
-    var p1Mag = mathHelper.distance(points[0].x, points[0].y, source.x, source.y);
-
-    var closestP2Dot = mathHelper.dot(closest.x - source.x, closest.y - source.y, points[1].x - source.x, points[1].y - source.y);
-
-    var p2Mag = mathHelper.distance(points[1].x, points[1].y, source.x, source.y);
-
-    var p1P2Dot = mathHelper.dot(points[0].x - source.x, points[0].y - source.y, points[1].x - source.x, points[1].y - source.y);
-
-    /*var p1P2 = Math.acos(p1P2Dot/(p1Mag*p2Mag));
-
-    var closestP1 = Math.acos(closestP1Dot/(closestMag*p1Mag));
-
-    var closestP2 = Math.acos(closestP2Dot/(closestMag*p2Mag));
-
-    //console.log('Angles', p1P2, closestP1, closestP2, ' - ', p1P2Dot/(p1Mag*p2Mag), closestP1Dot/(closestMag*p1Mag), closestP2Dot/(closestMag*p2Mag))
-    */
-
-    if(p1P2Dot > closestP1Dot && p1P2Dot > closestP2Dot)
-    {
-        //console.log('WIDE')
-        return [points[0], points[1]]
-    }
-    else if(closestP1Dot < closestP2Dot)
-    {
-        //console.log('P2')
-        return [closest, points[1]]
-    }
-    else if(closestP2Dot < closestP1Dot)
-    {
-        //console.log('P1')
-        return [closest, points[0]]
-    }
-    else 
-    {
-        console.log('THE FUCK')
-        return null
-    }
-
 }
 
 LightLayer.prototype.getClosestPoint = function(points, source)
