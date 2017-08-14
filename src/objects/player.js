@@ -3,9 +3,14 @@ function Player(x, y) {
 
     this.walkSpeed = 300;
     this.moveDirX = 0;
+    this.moveDirY = 0;
     this.inputLocked = false;
 
     this.numKeys = 0;
+
+    this.gravity = 0;
+
+    this.physics = true;
 
     game.audio.add('jump', 1, [[0, , 0.22, , 0.1871, 0.3251, , 0.2199, , , , -0.2199, , 0.1513, 0.02, , , , 0.74, , , , -0.02, 0.3]]);
     game.audio.add('flip', 1, [[0, , 0.18, 0.49, , 0.49, , 0.7, -0.02, , , -0.24, , 0.12, -0.04, , -0.02, -0.02, 0.48, , , , , 0.3]]);
@@ -14,9 +19,16 @@ function Player(x, y) {
 
 inherit(Player, Sprite);
 
-Player.prototype.move = function (dir) {
+Player.prototype.moveHorizontally = function (xdir) {
     if (!this.inputLocked) {
-        this.moveDirX = dir;
+        this.moveDirX = xdir;
+        this.play(0, true, 15);
+    }
+};
+
+Player.prototype.moveVertically = function (ydir) {
+    if (!this.inputLocked) {
+        this.moveDirY = ydir;
         this.play(0, true, 15);
     }
 };
@@ -31,42 +43,32 @@ Player.prototype.die = function () {
 
 Player.prototype.stop = function () {
     this.velocity.x = 0;
+    this.velocity.y = 0;
     this.moveDirX = 0;
+    this.moveDirY = 0;
     Sprite.prototype.stop.call(this);
-};
-
-Player.prototype.jump = function () {
-    if (!this.inputLocked && (this.colliding.bottom || this.colliding.top)) {
-        game.audio.play('jump');
-        this.play(1, false);
-        this.velocity.y = -1300 * Math.sign(this.gravity);
-    }
-};
-
-Player.prototype.flip = function () {
-    if (this.inputLocked)
-        return;
-
-    game.audio.play('flip');
-    this.gravity *= -1;
-    this.flipY = !this.flipY;
 };
 
 Player.prototype.update = function (deltaSeconds) {
     if (!this.inputLocked) {
-        if (this.moveDirX !== 0)
-            this.flipX = this.moveDirX < 0;
 
+        if (this.moveDirX !== 0) {
+            this.flipX = this.moveDirX < 0;
+        }
+        
         this.velocity.x = this.moveDirX * this.walkSpeed;
+
+        this.velocity.y = this.moveDirY * this.walkSpeed;
     }
 
     Sprite.prototype.update.call(this, deltaSeconds);
 
-    if (this.animation === 1 && (this.colliding.bottom || this.colliding.top)) {
+    if (this.animation === 1 && (this.colliding.bottom || this.colliding.top || this.colliding.left || this.colliding.right)) {
         Sprite.prototype.stop.call(this);
         this.frame = 0;
-        if (this.moveDirX !== 0)
+        if (this.moveDirX !== 0 || this.moveDirY !== 0) {
             this.play(0, true, 15);
+        }
     }
 
 };
