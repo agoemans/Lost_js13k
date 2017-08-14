@@ -1,5 +1,5 @@
 function Player(x, y) {
-    Sprite.call(this, x, y, 'assets/player.png', 2, 2);
+    Sprite.call(this, x, y, 'assets/player.png');
 
     this.walkSpeed = 300;
     this.moveDirX = 0;
