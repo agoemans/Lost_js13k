@@ -254,4 +254,19 @@ Sprite.prototype.render = function (context) {
         context.restore();
 };
 
+Sprite.prototype.getPoints = function()
+{
+    var points = [];
+
+    points.push({x: this.x, y: this.y});
+
+    points.push({x: this.x + this.width, y: this.y});
+
+    points.push({x: this.x + this.width, y: this.y + this.height});
+
+    points.push({x: this.x, y: this.y + this.height});
+
+    return points;
+}
+
 ctor(Sprite);

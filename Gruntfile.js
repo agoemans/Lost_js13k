@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 			server:{
 				options: {
 					port: 8000,
-					base:'build/dev'
+					base: 'build/dev/'
 				}
 			}
 		},
@@ -25,7 +25,11 @@ module.exports = function(grunt) {
 		uglify: {
 			development: {
 				options: {
-					mangle: false
+					mangle: false,
+					beautify: true,
+					sourceMap: {
+						includeSources: true
+					}
 				},
 				files: {
 		            'build/compiled.js': ['src/core/coreGlobals.js',
@@ -166,8 +170,8 @@ module.exports = function(grunt) {
 			dev: {
                 files: [
                     {expand: true, flatten: true, src: ['tmp/levels.txt'], dest: 'build/dev/assets', filter: 'isFile'},
-                    {expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/dev/assets'},
-                    {expand: true, flatten: true, src: ['build/compiled.js'], dest: 'build/dev/src', filter: 'isFile'},
+					{expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/dev/assets'},
+                    {expand: true, flatten: true, src: ['build/compiled.js*'], dest: 'build/dev/src', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/dev', filter: 'isFile'}
                 ]
 			}

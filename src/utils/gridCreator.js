@@ -35,7 +35,7 @@ var gridCreator = (function () {
 
         while(mainList.length < 8){
             while(smallList.length < 2){
-                smallList.push(getRandomNumber(0, 11));
+                smallList.push(getRandomNumber(3, 3));
             }
             mainList.push(smallList);
             smallList = [];
