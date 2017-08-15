@@ -23,7 +23,7 @@ Game.prototype.enter = function (config) {
 
     this.lightLayer = new LightLayer(this.level);
 
-    this.player = new Player(10,10);
+    this.player = new Player(100,100);
 
     this.add(this.player);
 
