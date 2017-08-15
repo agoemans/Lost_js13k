@@ -1,5 +1,5 @@
 function Player(x, y) {
-    Sprite.call(this, x, y, 'assets/player.png');
+    Sprite.call(this, x, y, 'assets/character.png', 4, 4);
 
     this.walkSpeed = 300;
     this.moveDirX = 0;
@@ -22,14 +22,14 @@ inherit(Player, Sprite);
 Player.prototype.moveHorizontally = function (xdir) {
     if (!this.inputLocked) {
         this.moveDirX = xdir;
-        this.play(0, true, 15);
+        this.play(1, true, 15);
     }
 };
 
 Player.prototype.moveVertically = function (ydir) {
     if (!this.inputLocked) {
         this.moveDirY = ydir;
-        this.play(0, true, 15);
+        this.play((ydir > 0) ? 0 : 3, true, 15);
     }
 };
 
@@ -63,7 +63,7 @@ Player.prototype.update = function (deltaSeconds) {
 
     Sprite.prototype.update.call(this, deltaSeconds);
 
-    if (this.animation === 1 && (this.colliding.bottom || this.colliding.top || this.colliding.left || this.colliding.right)) {
+    if (this.colliding.bottom || this.colliding.top || this.colliding.left || this.colliding.right) {
         Sprite.prototype.stop.call(this);
         this.frame = 0;
         if (this.moveDirX !== 0 || this.moveDirY !== 0) {
