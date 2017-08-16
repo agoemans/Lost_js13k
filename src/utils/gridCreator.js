@@ -1,7 +1,6 @@
 var gridCreator = (function () {
     var outerArrLength = 12;
     var innerArrLength = 12;
-    var minePositions = setMinePositions();
 
     function createBaseGrid(outerArr, innerArr) {
         //first creates the num by num grid with random num of bombs
@@ -29,114 +28,183 @@ var gridCreator = (function () {
         return outerList;
     }
 
-    function setMinePositions() {
-        var smallList = [];
-        var mainList = [];
+    // function divideByTwoWalls(row, col, arr){
+    //     console.log('row, col', row, col);
+    //     return new Promise(function(resolve, reject){
+    //         for (var r = 0; r < arr.length; r++){
+    //             for (var c = 0; c < arr.length; c++){
+    //                 if(c == col){
+    //                     arr[r][c] = 'Y';
+    //                 }
+    //                 if(r == row){
+    //                     console.log('this is the row', r, c, row);
+    //                     arr[r][c] = 'Y';
+    //                 }
+    //             }
+    //
+    //         }
+    //         resolve(arr);
+    //         reject('Could not divide by two walls');
+    //     })
+    // }
 
-        while(mainList.length < 8){
-            while(smallList.length < 2){
-                smallList.push(getRandomNumber(3, 3));
-            }
-            mainList.push(smallList);
-            smallList = [];
-        }
+    function divideByTwoWalls(calculatedList, arr) {
+        return new Promise(function (resolve, reject) {
+            for (var x = 0; x < calculatedList.length; x++) {
+                var item = calculatedList[x];
+                console.log('arr[item.r][item.c]', arr[item.r][item.c]);
 
-        return mainList;
-    }
+                // arr[item.r][item.c] ='Y';
 
-    function getGridWithMines(mineArray, baseGrid) {
-        return new Promise(function(resolve, reject){
-            for(var i = 0; i < mineArray.length; i++){
-                var row = mineArray[i][0];
-                var col = mineArray[i][1];
+                for (var r = 0; r < arr.length; r++) {
+                    for (var c = 0; c < arr.length; c++) {
+                        if (c == item.c) {
+                            arr[r][c] = 'Y';
+                        }
+                        if (r == item.r) {
+                            // console.log('this is the row', r, c);
+                            arr[r][c] = 'Y';
+                        }
+                    }
 
-                if(baseGrid[row][col] !== 'b'){
-                    baseGrid[row][col] = 'b';
                 }
 
             }
-            resolve(baseGrid);
-            reject('Could not calculate mine positions');
-        });
-    }
-
-
-    function calcMines(baseArray) {
-        //calculates mines around a box
-        for (var x = 0; x < baseArray.length; x++) {
-            for (var y = 0; y < baseArray[x].length; y++) {
-                if (baseArray[x][y] == 'b') {
-                    updateAllDirections(baseArray, x, y);
-                }
-
-            }
-
-        }
-
-        return baseArray;
-    }
-
-    function updateTile(list, row, col) {
-        if (row == -1 || col == -1) {
-            return;
-        }
-        try {
-            var tile = list[row][col];
-            if (tile !== undefined && tile !== 'b') {
-                tile++;
-                list[row][col] = tile;
-                //console.log('tile', tile);
-            }
-
-        } catch (e) {
-            console.log('this is the row and col', row, col);
-            console.log(e);
-        }
-    }
-
-    //todo move this and related funct to separate one
-    function updateAllDirections(list, row, col) {
-        updateTile(list, row - 1, col - 1);
-        updateTile(list, row - 1, col);
-        updateTile(list, row - 1, col + 1);
-        updateTile(list, row, col - 1);
-        updateTile(list, row, col + 1);
-        updateTile(list, row + 1, col - 1);
-        updateTile(list, row + 1, col);
-        updateTile(list, row + 1, col + 1);
-    }
-
-    function calculateMineProxmity(baseArray){
-        return new Promise(function(resolve, reject){
-            var arr = calcMines(baseArray);
             resolve(arr);
-            reject('Could not calculate mines');
+            reject('Could not divide by two walls');
         })
     }
 
-    function getBaseGrid(outerArr, innerArr){
-        return new Promise(function(resolve, reject){
+    function addVWall(minY, maxY, x, grid, hole) {
+        var hole = getRandomNumber(minY, maxY);
+        console.log('VWall', minY, maxY, x, 'hole = ', hole);
+
+        for (var i = minY; i <= maxY; i++) {
+            if (i == hole) {
+                grid[i][x] = 'X';
+            }
+            else {
+                grid[i][x] = "Y";
+            }
+        }
+    }
+
+    function addHWall(minX, maxX, y, grid, hole) {
+        var hole = getRandomNumber(minX, maxX);
+        console.log('HWall', minX, maxX, y, 'hole = ', hole);
+
+        for (var i = minX; i <= maxX; i++) {
+            if (i == hole) {
+                grid[y][i] = 'X';
+            }
+            else {
+                grid[y][i] = "Y";
+            }
+        }
+    }
+
+    function subDivideArea(horizontal, minR, minC, maxR, maxC, grid) {
+
+        var myHoriz = !horizontal;
+        var x, y;
+
+        if ((maxR - minR) > 3 && horizontal) {
+            // y = getRandomNumber(minR + 1, maxR - 1);
+            y = getRow(minR + 1, maxR - 1, grid);
+            addHWall(minC, maxC, y, grid);
+
+            //draw col
+            subDivideArea(myHoriz, minR, minC, y-1, maxC, grid);
+
+            //draw row
+            subDivideArea(myHoriz, y+1, minC, maxR, maxC, grid);
+        }
+
+        if ((maxC - minC) > 3 && !horizontal) {
+            // x = getRandomNumber(minC + 1, maxC - 1);
+            x = getCol(minC + 1, maxC - 1, grid);
+            addVWall(minR, maxR, x, grid);
+
+            subDivideArea(myHoriz, minR, minC, maxR, x-1, grid);
+
+            subDivideArea(myHoriz, minR, x+1, maxR, maxC, grid);
+        }
+
+    }
+
+    function getRow(min, max, grid){
+        var y = getRandomNumber(min, max);
+        var minEnd = grid[y][min - 1];
+        var maxEnd = grid[y][max + 1];
+        console.log('minEnd, maxend', minEnd, maxEnd);
+        while(minEnd == 'X' || maxEnd == 'X'){
+            y = getRandomNumber(min, max);
+            minEnd = grid[y][min - 1];
+            maxEnd = grid[y][max + 1];
+            // console.log('looping min max adn x', minEnd, maxEnd, x);
+            // if(minEnd != 'X' && maxEnd != 'X'){
+            //     break;
+            // } else {
+            //     y = getRandomNumber(min, max);
+            //     minEnd = grid[y][min - 1];
+            //     maxEnd = grid[y][max + 1];
+            //     console.log('looping min max adn x', minEnd, maxEnd, x);
+            // }
+        }
+        return y;
+    }
+
+    function getCol(min, max, grid){
+        var x = getRandomNumber(min, max);
+        var minEnd = grid[min - 1][x];
+        var maxEnd = grid[max + 1][x];
+        console.log('minEnd, maxend', minEnd, maxEnd);
+        while(minEnd == 'X' || maxEnd == 'X'){
+            x = getRandomNumber(min, max);
+            minEnd = grid[min - 1][x];
+            maxEnd = grid[max + 1][x];
+            //console.log('looping min max and x', minEnd, maxEnd, x);
+            // if(minEnd != 'X' && maxEnd != 'X'){
+            //     break;
+            // } else {
+            //     x = getRandomNumber(min, max);
+            //     minEnd = grid[min - 1][x];
+            //     maxEnd = grid[max + 1][x];
+            //     console.log('looping min max and x', minEnd, maxEnd, x);
+            // }
+        }
+        return x;
+    }
+
+    function getBaseGrid(outerArr, innerArr) {
+        return new Promise(function (resolve, reject) {
             var emptyBaseGrid = createBaseGrid(outerArr, innerArr);
             resolve(emptyBaseGrid);
             reject('Could not create base grid');
         })
     }
 
-    function createFullMineGrid(outerArr, innerArr){
+    function calculateGridWalls(arr) {
+        return new Promise(function (resolve, reject) {
+
+            subDivideArea(true, 0, 0, arr.length - 1, arr.length - 1, arr);
+            //addInnerWall(true, 0, arr.length - 1, 0, arr.length - 1, 0, arr);
+
+            resolve(arr);
+            reject('Could not create base grid');
+        })
+    }
+
+    function createFullMazeGrid(outerArr, innerArr) {
         //too refactor this to helper
-        return new Promise(function(resolve, reject){
-            getBaseGrid(outerArr, innerArr).then(function(baseGrid){
-                getGridWithMines(minePositions, baseGrid).then(function(gridWithMines){
-                    calculateMineProxmity(gridWithMines).then(function(gridWithCalculations){
-                        resolve(gridWithCalculations);
-                        reject('Could not create full grid');
-                    });
+        return new Promise(function (resolve, reject) {
+            getBaseGrid(outerArr, innerArr).then(function (baseGrid) {
+                calculateGridWalls(baseGrid).then(function (calculatedGrid) {
+                    console.log('calculateGridWalls')
+                    resolve(calculatedGrid);
+                    reject('Could not create FullMazeGrid');
                 });
 
-                // calculateMineProxmity(baseGrid).then(function(gridWithMines){
-                //     resolve(gridWithMines);
-                //     reject('Could not create full grid');
-                // });
             });
         });
     }
@@ -151,7 +219,7 @@ var gridCreator = (function () {
     return {
         grid: [],
         create: function () {
-            return createFullMineGrid(12, 12);
+            return createFullMazeGrid(15, 15);
 
         }
     }

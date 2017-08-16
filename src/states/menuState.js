@@ -19,7 +19,7 @@ Menu.prototype.enter = function () {
     loadFile(function (data) {
         game.levels = data.split('&');
         this.add(this.playButton);
-    }, this, 'assets/levels.txt');
+    }, this, 'assets/level1.txt');
 
     this.playButton.onClick = function () {
         var levelStr = localStorage[game.keyName] || 1;
