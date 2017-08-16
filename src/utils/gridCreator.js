@@ -75,9 +75,9 @@ var gridCreator = (function () {
         })
     }
 
-    function addVWall(minY, maxY, x, grid) {
-        console.log('VWall', minY, maxY, x);
+    function addVWall(minY, maxY, x, grid, hole) {
         var hole = getRandomNumber(minY, maxY);
+        console.log('VWall', minY, maxY, x, 'hole = ', hole);
 
         for (var i = minY; i <= maxY; i++) {
             if (i == hole) {
@@ -89,9 +89,9 @@ var gridCreator = (function () {
         }
     }
 
-    function addHWall(minX, maxX, y, grid) {
-        console.log('HWall', minX, maxX, y);
+    function addHWall(minX, maxX, y, grid, hole) {
         var hole = getRandomNumber(minX, maxX);
+        console.log('HWall', minX, maxX, y, 'hole = ', hole);
 
         for (var i = minX; i <= maxX; i++) {
             if (i == hole) {
@@ -106,18 +106,23 @@ var gridCreator = (function () {
     function subDivideArea(horizontal, minR, minC, maxR, maxC, grid) {
 
         var myHoriz = !horizontal;
+        var x, y;
 
-        if ((maxR - minR) > 0 && horizontal) {
-            var y = getRandomNumber(minR + 1, maxR - 1);
+        if ((maxR - minR) > 3 && horizontal) {
+            // y = getRandomNumber(minR + 1, maxR - 1);
+            y = getRow(minR + 1, maxR - 1, grid);
             addHWall(minC, maxC, y, grid);
 
+            //draw col
             subDivideArea(myHoriz, minR, minC, y-1, maxC, grid);
 
+            //draw row
             subDivideArea(myHoriz, y+1, minC, maxR, maxC, grid);
         }
 
-        if ((maxC - minC) > 0 && !horizontal) {
-            var x = getRandomNumber(minC + 1, maxC - 1);
+        if ((maxC - minC) > 3 && !horizontal) {
+            // x = getRandomNumber(minC + 1, maxC - 1);
+            x = getCol(minC + 1, maxC - 1, grid);
             addVWall(minR, maxR, x, grid);
 
             subDivideArea(myHoriz, minR, minC, maxR, x-1, grid);
@@ -127,6 +132,49 @@ var gridCreator = (function () {
 
     }
 
+    function getRow(min, max, grid){
+        var y = getRandomNumber(min, max);
+        var minEnd = grid[y][min - 1];
+        var maxEnd = grid[y][max + 1];
+        console.log('minEnd, maxend', minEnd, maxEnd);
+        while(minEnd == 'X' || maxEnd == 'X'){
+            y = getRandomNumber(min, max);
+            minEnd = grid[y][min - 1];
+            maxEnd = grid[y][max + 1];
+            // console.log('looping min max adn x', minEnd, maxEnd, x);
+            // if(minEnd != 'X' && maxEnd != 'X'){
+            //     break;
+            // } else {
+            //     y = getRandomNumber(min, max);
+            //     minEnd = grid[y][min - 1];
+            //     maxEnd = grid[y][max + 1];
+            //     console.log('looping min max adn x', minEnd, maxEnd, x);
+            // }
+        }
+        return y;
+    }
+
+    function getCol(min, max, grid){
+        var x = getRandomNumber(min, max);
+        var minEnd = grid[min - 1][x];
+        var maxEnd = grid[max + 1][x];
+        console.log('minEnd, maxend', minEnd, maxEnd);
+        while(minEnd == 'X' || maxEnd == 'X'){
+            x = getRandomNumber(min, max);
+            minEnd = grid[min - 1][x];
+            maxEnd = grid[max + 1][x];
+            //console.log('looping min max and x', minEnd, maxEnd, x);
+            // if(minEnd != 'X' && maxEnd != 'X'){
+            //     break;
+            // } else {
+            //     x = getRandomNumber(min, max);
+            //     minEnd = grid[min - 1][x];
+            //     maxEnd = grid[max + 1][x];
+            //     console.log('looping min max and x', minEnd, maxEnd, x);
+            // }
+        }
+        return x;
+    }
 
     function getBaseGrid(outerArr, innerArr) {
         return new Promise(function (resolve, reject) {
@@ -152,6 +200,7 @@ var gridCreator = (function () {
         return new Promise(function (resolve, reject) {
             getBaseGrid(outerArr, innerArr).then(function (baseGrid) {
                 calculateGridWalls(baseGrid).then(function (calculatedGrid) {
+                    console.log('calculateGridWalls')
                     resolve(calculatedGrid);
                     reject('Could not create FullMazeGrid');
                 });

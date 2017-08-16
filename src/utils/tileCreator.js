@@ -4,9 +4,9 @@ function TileCreator() {
 TileCreator.prototype.tileClass = BrickSprite;
 
 TileCreator.prototype.createTile = function (config) {
-    // if (config.type === '_') {
-    //     return null;
-    // }
+    if (config.type === '_') {
+        return null;
+    }
 
     switch (config.type) {
         case 'Y':

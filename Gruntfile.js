@@ -218,7 +218,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('dev', [
     	'clean:dev',
-        'concat',
+        // 'concat',
         'uglify:development',
         'copy:dev',
         'connect',

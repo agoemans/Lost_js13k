@@ -15,8 +15,11 @@ Game.prototype.enter = function (config) {
 
     this.cameraOffset = 0;
 
+    var level = getUrlParameter('level') || config.level;
+    var levelInt = parseInt(level);
+
     this.level = new Level();
-    this.level.load(null, this.addToRenderList, this);
+    this.level.load(levelInt, this.addToRenderList, this);
 
     gameOverHelper.register(this.showGameOver, this);
 };

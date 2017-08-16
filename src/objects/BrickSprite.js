@@ -5,9 +5,9 @@ function BrickSprite(config) {
     this.altImgSrc = null;
     this.image.src = (config.type === 'X' ? 'assets/wall_w.png' : 'assets/wall2.png');
     this.isFlagged = false;
-    this.canClick = true;
+    this.canClick = false;
     this.tint = '2277aa';
-    this.interactable = true;
+    this.interactable = false;
     this.tileFinder = tileFinder;
     this.row = config.row;
     this.col = config.col;
