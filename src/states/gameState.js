@@ -17,10 +17,13 @@ Game.prototype.enter = function (config) {
     State.prototype.enter.call(this, context);
 
     this.cameraOffset = 0;
-    
+
+    var level = getUrlParameter('level') || config.level;
+    var levelInt = parseInt(level);
+
     this.level = new Level();
 
-    this.level.load(null, this.addToRenderList, this);
+    this.level.load(levelInt, this.addToRenderList, this);
 
     this.lightLayer = new LightLayer(this.level);
 
@@ -31,7 +34,7 @@ Game.prototype.enter = function (config) {
     this.add(this.player);
 
     this.effectsLayer = new EffectsLayer(100)
-  
+
     this.add(this.effectsLayer);
 
     this.hud = new Hud(this.resources);

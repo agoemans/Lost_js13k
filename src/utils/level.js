@@ -23,7 +23,7 @@ function Level(number) {
     this.renderList = [];
 
     //determine if read level from file or generated
-    this.generated = true;
+    this.generated = false;
 
     this.tileCreator = new TileCreator();
 
@@ -48,6 +48,7 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
             console.log('gridcreator', result);
         });
     } else {
+        console.log('level else');
         this.loadLevel(number);
     }
 }

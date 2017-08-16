@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 			server:{
 				options: {
 					port: 8000,
-					base: 'build/dev/'
+					base:'build/dev'
 				}
 			}
 		},
@@ -169,9 +169,9 @@ module.exports = function(grunt) {
             },
 			dev: {
                 files: [
-                    {expand: true, flatten: true, src: ['tmp/levels.txt'], dest: 'build/dev/assets', filter: 'isFile'},
 					{expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/dev/assets'},
-                    {expand: true, flatten: true, src: ['build/compiled.js*'], dest: 'build/dev/src', filter: 'isFile'},
+                    {expand: true, flatten: true, src: ['assets/level1.txt'], dest: 'build/dev/assets', filter: 'isFile'},
+                    {expand: true, flatten: true, src: ['build/compiled.js'], dest: 'build/dev/src', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/dev', filter: 'isFile'}
                 ]
 			}
@@ -222,7 +222,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('dev', [
     	'clean:dev',
-        'concat',
+        // 'concat',
         'uglify:development',
         'copy:dev',
         'connect',
