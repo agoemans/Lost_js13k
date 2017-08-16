@@ -4,17 +4,20 @@
 // function renderGame(context)
 // function mouseMove(x,y)
 
+var width = 768;
+var height = 768;
+
 window.onload = function () {
     var canvas = document.getElementById("game");
 
-    canvasWidth = window.innerWidth / window.innerHeight * canvasHeight;
+    canvasWidth = width / height * canvasHeight;
 
-    var scale = window.innerHeight / canvasHeight;
+    var scale = width / canvasHeight;
 
     context = canvas.getContext("2d");
 
-    context.canvas.width = window.innerWidth;
-    context.canvas.height = window.innerHeight;
+    context.canvas.width = width;
+    context.canvas.height = height;
 
     localCanvas = document.createElement('canvas');
     localCanvas.width = canvasWidth;
