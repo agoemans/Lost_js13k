@@ -165,7 +165,7 @@ module.exports = function(grunt) {
             },
 			dev: {
                 files: [
-                    {expand: true, flatten: true, src: ['tmp/levels.txt'], dest: 'build/dev/assets', filter: 'isFile'},
+                    {expand: true, flatten: true, src: ['assets/level1.txt'], dest: 'build/dev/assets', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/dev/assets'},
                     {expand: true, flatten: true, src: ['build/compiled.js'], dest: 'build/dev/src', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/dev', filter: 'isFile'}
