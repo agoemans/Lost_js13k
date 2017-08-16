@@ -1,8 +1,6 @@
 function EffectsLayer(particleCount) {
     GameObject.call(this, 0, 0);
 
-    this.lightingPos = { x: 0, y: 0 }
-
     this.effectsCanvas = document.createElement('canvas');
     
     this.effectsCanvas.width = game.width;

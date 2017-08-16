@@ -87,7 +87,7 @@ State.prototype.mouseMove = function (x, y) {
         
         var position = this.camera.transform(x,y);
 
-        if (obj.contains(position.x, position.y)) {
+        if (obj.interactable && obj.contains(position.x, position.y)) {
             obj.mouseOver();
             this.currentMouseOver = obj;
             return;

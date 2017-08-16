@@ -97,6 +97,7 @@ Game.prototype.leave = function () {
 };
 
 Game.prototype.update = function (deltaSeconds) {
+
     this.level.update(deltaSeconds);
 
     this.lightLayer.setLightSource(this.player.x + this.player.width/2, this.player.y + this.player.height/2);
@@ -127,6 +128,8 @@ Game.prototype.render = function (context) {
     this.camera.setHud(context);
 
     this.hud.render(context);
+
+    this.camera.setWorld(context);
 };
 
 ctor(Game);

@@ -1,7 +1,11 @@
 function LightLayer(level) {
     GameObject.call(this, 0, 0);
 
-    this.lightingPos = { x: 0, y: 0 }
+    this.lightingPos = { x: 0, y: 0 };
+
+    this.width = game.width;
+
+    this.height = game.height;
 
     this.level = level
 
@@ -65,6 +69,15 @@ LightLayer.prototype.render = function(context) {
     this.lightContext.globalAlpha = 1;
 
     var attenuation = minSize + sizeVar * iterations;
+
+    this.width = attenuation*2;
+
+    this.height = attenuation*2;
+
+    this.x = this.lightingPos.x - this.width/2;
+
+    this.y = this.lightingPos.y - this.height/2;
+
 
     this.level.renderList.forEach(function (obj) {
         if(obj instanceof BrickSprite && obj.visible){

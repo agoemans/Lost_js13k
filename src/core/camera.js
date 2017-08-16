@@ -14,11 +14,11 @@ Camera.prototype.setPosition = function(x,y) {
 
 Camera.prototype.transform = function (x,y) {
 
-    if(this.state == 0)
+    if(this.state === 0)
     {
         return { x: x, y: y }
     }
-    else
+    else if(this.state === 1)
     {
         return { x: x - game.width/2 + this.x, y: y - game.height/2 + this.y };
     }
@@ -39,11 +39,13 @@ Camera.prototype.setHud = function (context) {
 
 Camera.prototype.isOnScreen = function(gameObject) {
 
-    var xFit = gameObject.x > 0 && gameObject.x + gameObject.width < game.width;
+    var position = this.transform(gameObject.x, gameObject.y);
 
-    var yFit = gameObject.y > 0 && gameObject.y + gameObject.height < game.height;
+    var xFit = position.x > 0 || position.x + gameObject.width < game.width;
 
-    return xFit && yFit;
+    var yFit = position.y > 0 || position.y + gameObject.height < game.height;
+
+    return xFit || yFit;
 }
 
 
