@@ -16,8 +16,11 @@ window.onload = function () {
 
     context = canvas.getContext("2d");
 
-    context.canvas.width = width;
-    context.canvas.height = height;
+    canvas.width = width;
+    canvas.height = height;
+
+    canvas.style.marginLeft = (window.innerWidth - width)/2 + 'px';
+    canvas.style.marginTop = (window.innerHeight - height)/2 + 'px';
 
     localCanvas = document.createElement('canvas');
     localCanvas.width = canvasWidth;

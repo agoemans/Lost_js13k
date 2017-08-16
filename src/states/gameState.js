@@ -19,21 +19,22 @@ Game.prototype.enter = function (config) {
     this.cameraOffset = 0;
     
     this.level = new Level();
+
     this.level.load(null, this.addToRenderList, this);
 
     this.lightLayer = new LightLayer(this.level);
+
+    this.add(this.lightLayer);
 
     this.player = new Player(100,100);
 
     this.add(this.player);
 
-    this.hud = new Hud(this.resources);
-
-    this.add(this.hud);
-
     this.effectsLayer = new EffectsLayer(100)
   
     this.add(this.effectsLayer);
+
+    this.hud = new Hud(this.resources);
 
     gameOverHelper.register(this.showGameOver, this);
 };
@@ -98,27 +99,34 @@ Game.prototype.leave = function () {
 Game.prototype.update = function (deltaSeconds) {
     this.level.update(deltaSeconds);
 
-    this.lightLayer.setLightSource(this.player.x + this.player.width/2, this.player.y + this.player.height/2)
+    this.lightLayer.setLightSource(this.player.x + this.player.width/2, this.player.y + this.player.height/2);
 
-  State.prototype.update.call(this, deltaSeconds);
+    this.camera.setPosition(this.player.x + this.player.width/2, this.player.y + this.player.height/2);
+
+    State.prototype.update.call(this, deltaSeconds);
+
+    this.hud.update(deltaSeconds);
 };
 
 Game.prototype.render = function (context) {
-    if (this.level.player) {
+
+    this.camera.setWorld(context);
+
+    /*if (this.level.player) {
         var xOffset = (game.width - (this.level.tilesX * this.level.tileSize)) / 2;
         var yOffset = (game.height - (this.level.tilesY * this.level.tileSize)) / 2;
 
         this.cameraOffset = Math.floor(Math.clamp(-this.level.player.x + game.width / 2, -Level.instance.width + game.width, 0));
         context.setTransform(1, 0, 0, 1, this.cameraOffset + Math.max(xOffset, 0), yOffset);
-    }
+    }*/
 
     this.level.render(context);
 
     State.prototype.render.call(this, context);
     
-    this.lightLayer.render(context)
+    this.camera.setHud(context);
 
-    context.setTransform(1, 0, 0, 1, 0, 0);
+    this.hud.render(context);
 };
 
 ctor(Game);

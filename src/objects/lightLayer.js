@@ -1,4 +1,5 @@
 function LightLayer(level) {
+    GameObject.call(this, 0, 0);
 
     this.lightingPos = { x: 0, y: 0 }
 
@@ -15,6 +16,8 @@ function LightLayer(level) {
     this.lightContext = this.lightCanvas.getContext('2d');
 };
 
+
+inherit(LightLayer, GameObject);
 ctor(LightLayer);
 
 LightLayer.prototype.setLightSource = function(x,y) {
