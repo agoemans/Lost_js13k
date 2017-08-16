@@ -1,6 +1,5 @@
 function EffectsLayer(particleCount) {
-
-    this.lightingPos = { x: 0, y: 0 }
+    GameObject.call(this, 0, 0);
 
     this.effectsCanvas = document.createElement('canvas');
     
@@ -24,6 +23,8 @@ function EffectsLayer(particleCount) {
     }
 };
 
+
+inherit(EffectsLayer, GameObject);
 ctor(EffectsLayer);
 
 EffectsLayer.prototype.setupParticle = function(particle)

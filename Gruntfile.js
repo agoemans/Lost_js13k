@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			scripts: {
-				files: ['assets/*.txt', '!assets/levels.txt', 'src/**/*.js'],
+				files: ['assets/*.txt', '!assets/levels.txt', 'src/**/*.js', 'htmlFile/index.html'],
 				tasks: ['clean:dev',
                     'concat',
                     'uglify:development',

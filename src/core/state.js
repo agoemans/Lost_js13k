@@ -1,6 +1,8 @@
 function State() {
     this.renderList = [];
     this.currentMouseOver = null;
+
+    this.camera = new Camera();
 };
 
 inherit(State, Object);
@@ -25,23 +27,29 @@ State.prototype.clear = function () {
 
 State.prototype.update = function (deltaSeconds) {
     this.renderList.forEach(function (obj) {
-        obj.update(deltaSeconds);
-    });
+        if(this.camera.isOnScreen(obj)) {
+            obj.update(deltaSeconds);
+        }
+    }.bind(this));
 };
 
 State.prototype.render = function (context) {
 
     this.renderList.forEach(function (obj) {
-        obj.render(context);
-    });
+        if(this.camera.isOnScreen(obj)) {
+            obj.render(context);
+        }
+    }.bind(this));
 };
 
 
 State.prototype.mouseUp = function (x, y) {
     for (var i = this.renderList.length - 1; i >= 0; i--) {
         var obj = this.renderList[i]
-        //todo add interactable boolean
-        if (obj.contains(x, y) && obj.interactable) {
+
+        var position = this.camera.transform(x,y);
+
+        if (obj.interactable && obj.contains(position.x, position.y)) {
             obj.mouseUp();
             return;
         }
@@ -51,8 +59,10 @@ State.prototype.mouseUp = function (x, y) {
 State.prototype.mouseDown = function (x, y) {
     for (var i = this.renderList.length - 1; i >= 0; i--) {
         var obj = this.renderList[i];
-        //todo add interactable boolean
-        if (obj.contains(x, y) && obj.interactable) {
+
+        var position = this.camera.transform(x,y);
+        
+        if (obj.interactable && obj.contains(position.x, position.y)) {
             obj.mouseDown();
             return;
         }
@@ -61,7 +71,9 @@ State.prototype.mouseDown = function (x, y) {
 
 State.prototype.mouseMove = function (x, y) {
     if (this.currentMouseOver) {
-        if (this.currentMouseOver.contains(x, y)) {
+        var position = this.camera.transform(x,y);
+
+        if (this.currentMouseOver.contains(position.x, position.y)) {
             return;
         }
         else {
@@ -72,7 +84,10 @@ State.prototype.mouseMove = function (x, y) {
 
     for (var i = this.renderList.length - 1; i >= 0; i--) {
         var obj = this.renderList[i];
-        if (obj.contains(x, y)) {
+        
+        var position = this.camera.transform(x,y);
+
+        if (obj.interactable && obj.contains(position.x, position.y)) {
             obj.mouseOver();
             this.currentMouseOver = obj;
             return;

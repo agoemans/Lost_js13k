@@ -4,8 +4,8 @@ var then = Date.now();
 var context = null;
 var drawFps = true;
 
-var canvasWidth = 800;
-var canvasHeight = 896;
+var canvasWidth = 768;
+var canvasHeight = 768;
 
 var localCanvas = null;
 var localContext = null;

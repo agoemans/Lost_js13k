@@ -242,15 +242,6 @@ Sprite.prototype.render = function (context) {
     if (this.loaded)
         context.drawImage(this.image, this.frame * this.width, this.animation * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
 
-    /*if(this.tint)
-     {
-     context.globalAlpha = 0.5;
-     context.globalCompositeOperation = "multiply";
-     context.fillStyle = this.tint;
-     context.fillRect(this.x,this.y,this.width,this.height);
-     context.globalCompositeOperation = "source-over";
-     }*/
-
     if (this.flipY || this.flipX)
         context.restore();
 };
