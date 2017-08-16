@@ -21,6 +21,7 @@ Game.prototype.enter = function (config) {
     this.level = new Level();
     this.level.load(null, this.addToRenderList, this);
 
+    this.effectsLayer = new EffectsLayer(100)
     this.lightLayer = new LightLayer(this.level)
 
     gameOverHelper.register(this.showGameOver, this);
@@ -60,6 +61,9 @@ Game.prototype.leave = function () {
 
 Game.prototype.update = function (deltaSeconds) {
     this.level.update(deltaSeconds);
+    
+    this.effectsLayer.update(deltaSeconds);
+
     State.prototype.update.call(this, deltaSeconds);
 };
 
@@ -76,6 +80,8 @@ Game.prototype.render = function (context) {
 
     State.prototype.render.call(this, context);
 
+    this.effectsLayer.render(context);
+    
     this.lightLayer.render(context)
 
     context.setTransform(1, 0, 0, 1, 0, 0);
