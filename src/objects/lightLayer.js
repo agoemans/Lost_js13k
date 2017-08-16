@@ -40,7 +40,7 @@ LightLayer.prototype.render = function(context) {
     
     var sizeVar = 50;
 
-    var minSize = 20;
+    var minSize = 50;
 
     var minAlpha = 0.05
 

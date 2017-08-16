@@ -21,7 +21,19 @@ Game.prototype.enter = function (config) {
     this.level = new Level();
     this.level.load(null, this.addToRenderList, this);
 
-    this.lightLayer = new LightLayer(this.level)
+    this.lightLayer = new LightLayer(this.level);
+
+    this.player = new Player(100,100);
+
+    this.add(this.player);
+
+    this.hud = new Hud(this.resources);
+
+    this.add(this.hud);
+
+    this.effectsLayer = new EffectsLayer(100)
+  
+    this.add(this.effectsLayer);
 
     gameOverHelper.register(this.showGameOver, this);
 };
@@ -51,8 +63,33 @@ Game.prototype.mouseUp = function (x, y) {
 }
 
 Game.prototype.mouseMove = function(x,y) {
-    this.lightLayer.setLightSource(x,y)
 }
+
+
+Game.prototype.keyDown = function (key)
+{
+    if (!this.player)
+        return;
+
+    if (key == 37)
+        this.player.moveHorizontally(-1);
+    if (key == 39)
+        this.player.moveHorizontally(1);
+    if (key == 38)
+        this.player.moveVertically(-1);
+    if (key == 40)
+        this.player.moveVertically(1);
+};
+
+Game.prototype.keyUp = function (key)
+{
+    if (!this.player)
+        return;
+
+    if (key == 37 || key == 39 || key == 38 || key == 40)
+        this.player.stop();
+};
+
 
 Game.prototype.leave = function () {
     State.prototype.leave.call(this, context);
@@ -60,7 +97,10 @@ Game.prototype.leave = function () {
 
 Game.prototype.update = function (deltaSeconds) {
     this.level.update(deltaSeconds);
-    State.prototype.update.call(this, deltaSeconds);
+
+    this.lightLayer.setLightSource(this.player.x + this.player.width/2, this.player.y + this.player.height/2)
+
+  State.prototype.update.call(this, deltaSeconds);
 };
 
 Game.prototype.render = function (context) {
@@ -75,7 +115,7 @@ Game.prototype.render = function (context) {
     this.level.render(context);
 
     State.prototype.render.call(this, context);
-
+    
     this.lightLayer.render(context)
 
     context.setTransform(1, 0, 0, 1, 0, 0);

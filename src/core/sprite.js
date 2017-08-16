@@ -86,8 +86,8 @@ Sprite.prototype.doCollision = function (elapsed) {
         if (this.velocity.y < 0) {
             var tl = Level.instance.tileAt(x, y);
             var tr = Level.instance.tileAt(x + this.width - 1, y);
-            var tlOverlap = tl && tl.overlap(x, y, this.width, this.height);
-            var trOverlap = tr && tr.overlap(x, y, this.width, this.height);
+            var tlOverlap = tl && tl.visible && tl.overlap(x, y, this.width, this.height);
+            var trOverlap = tr && tr.visible && tr.overlap(x, y, this.width, this.height);
 
             if (tlOverlap)
                 collidingObjects.push(tl);
@@ -99,8 +99,8 @@ Sprite.prototype.doCollision = function (elapsed) {
         else if (this.velocity.y > 0) {
             var bl = Level.instance.tileAt(x, y + this.height - 1);
             var br = Level.instance.tileAt(x + this.width - 1, y + this.height - 1);
-            var blOverlap = bl && bl.overlap(x, y, this.width, this.height);
-            var brOverlap = br && br.overlap(x, y, this.width, this.height);
+            var blOverlap = bl && bl.visible && bl.overlap(x, y, this.width, this.height);
+            var brOverlap = br && br.visible && br.overlap(x, y, this.width, this.height);
 
             if (blOverlap)
                 collidingObjects.push(bl);
@@ -112,6 +112,7 @@ Sprite.prototype.doCollision = function (elapsed) {
 
         if (this.colliding.bottom || this.colliding.top) {
             this.velocity.y = 0;
+            console.log(this.colliding, bl, br)
             steps = i;
             break;
         }
@@ -130,8 +131,8 @@ Sprite.prototype.doCollision = function (elapsed) {
         if (this.velocity.x < 0) {
             var tl = Level.instance.tileAt(x, y);
             var bl = Level.instance.tileAt(x, y + this.height - 1);
-            var tlOverlap = tl && tl.overlap(x, y, this.width, this.height);
-            var blOverlap = bl && bl.overlap(x, y, this.width, this.height);
+            var tlOverlap = tl && tl.visible && tl.overlap(x, y, this.width, this.height);
+            var blOverlap = bl && bl.visible && bl.overlap(x, y, this.width, this.height);
 
             if (tlOverlap)
                 collidingObjects.push(tl);
@@ -144,8 +145,8 @@ Sprite.prototype.doCollision = function (elapsed) {
             var tr = Level.instance.tileAt(x + this.width - 1, y);
             var br = Level.instance.tileAt(x + this.width - 1, y + this.height - 1);
 
-            var trOverlap = tr && tr.overlap(x, y, this.width, this.height);
-            var brOverlap = br && br.overlap(x, y, this.width, this.height);
+            var trOverlap = tr && tr.visible && tr.overlap(x, y, this.width, this.height);
+            var brOverlap = br && br.visible && br.overlap(x, y, this.width, this.height);
 
             if (trOverlap)
                 collidingObjects.push(tr);
