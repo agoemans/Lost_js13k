@@ -41,12 +41,14 @@ Player.prototype.die = function () {
     this.stop();
 };
 
-Player.prototype.stop = function () {
+Player.prototype.stopHorizontal = function () {
     this.velocity.x = 0;
-    this.velocity.y = 0;
     this.moveDirX = 0;
+};
+
+Player.prototype.stopVertical = function () {
+    this.velocity.y = 0;
     this.moveDirY = 0;
-    Sprite.prototype.stop.call(this);
 };
 
 Player.prototype.update = function (deltaSeconds) {
@@ -59,6 +61,11 @@ Player.prototype.update = function (deltaSeconds) {
         this.velocity.x = this.moveDirX * this.walkSpeed;
 
         this.velocity.y = this.moveDirY * this.walkSpeed;
+    }
+
+    if(this.moveDirX === 0 && this.moveDirY === 0)
+    {
+        this.stop();
     }
 
     Sprite.prototype.update.call(this, deltaSeconds);

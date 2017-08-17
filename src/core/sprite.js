@@ -50,8 +50,7 @@ Sprite.prototype.resetCollision = function () {
 };
 
 Sprite.prototype.overlap = function (x, y, width, height) {
-    //return this.collides;
-    // TODO; fix this
+
     if (!this.collides)
         return false;
 
@@ -63,7 +62,8 @@ Sprite.prototype.overlap = function (x, y, width, height) {
 
     var top = this.y;
     var bottom = this.y + this.height;
-    var yOver = (top >= y && top <= y + height) || (bottom >= y && bottom <= y + height);
+    var yOver = (top >= y && top <= y + height) || (bottom >= y && bottom <= y + height)
+        || (top <= y && bottom >= y) || (top <= y + height && bottom >= y + height);
 
     return xOver && yOver;
 };

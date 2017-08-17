@@ -90,8 +90,12 @@ Game.prototype.keyUp = function (key)
     if (!this.player)
         return;
 
-    if (key == 37 || key == 39 || key == 38 || key == 40)
-        this.player.stop();
+    if (key == 37 || key == 39) {
+        this.player.stopHorizontal();
+    } else if(key == 38 || key == 40) {
+        this.player.stopVertical();
+    }
+        
 };
 
 
@@ -115,14 +119,6 @@ Game.prototype.update = function (deltaSeconds) {
 Game.prototype.render = function (context) {
 
     this.camera.setWorld(context);
-
-    /*if (this.level.player) {
-        var xOffset = (game.width - (this.level.tilesX * this.level.tileSize)) / 2;
-        var yOffset = (game.height - (this.level.tilesY * this.level.tileSize)) / 2;
-
-        this.cameraOffset = Math.floor(Math.clamp(-this.level.player.x + game.width / 2, -Level.instance.width + game.width, 0));
-        context.setTransform(1, 0, 0, 1, this.cameraOffset + Math.max(xOffset, 0), yOffset);
-    }*/
 
     this.level.render(context);
 
