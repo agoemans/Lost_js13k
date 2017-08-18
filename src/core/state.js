@@ -27,9 +27,7 @@ State.prototype.clear = function () {
 
 State.prototype.update = function (deltaSeconds) {
     this.renderList.forEach(function (obj) {
-        if(this.camera.isOnScreen(obj)) {
-            obj.update(deltaSeconds);
-        }
+        obj.update(deltaSeconds);
     }.bind(this));
 };
 
@@ -47,9 +45,7 @@ State.prototype.mouseUp = function (x, y) {
     for (var i = this.renderList.length - 1; i >= 0; i--) {
         var obj = this.renderList[i]
 
-        var position = this.camera.transform(x,y);
-
-        if (obj.interactable && obj.contains(position.x, position.y)) {
+        if (obj.interactable && obj.contains(x, y)) {
             obj.mouseUp();
             return;
         }
@@ -59,10 +55,8 @@ State.prototype.mouseUp = function (x, y) {
 State.prototype.mouseDown = function (x, y) {
     for (var i = this.renderList.length - 1; i >= 0; i--) {
         var obj = this.renderList[i];
-
-        var position = this.camera.transform(x,y);
         
-        if (obj.interactable && obj.contains(position.x, position.y)) {
+        if (obj.interactable && obj.contains(x, y)) {
             obj.mouseDown();
             return;
         }
@@ -71,9 +65,7 @@ State.prototype.mouseDown = function (x, y) {
 
 State.prototype.mouseMove = function (x, y) {
     if (this.currentMouseOver) {
-        var position = this.camera.transform(x,y);
-
-        if (this.currentMouseOver.contains(position.x, position.y)) {
+        if (this.currentMouseOver.contains(x, y)) {
             return;
         }
         else {
@@ -85,9 +77,7 @@ State.prototype.mouseMove = function (x, y) {
     for (var i = this.renderList.length - 1; i >= 0; i--) {
         var obj = this.renderList[i];
         
-        var position = this.camera.transform(x,y);
-
-        if (obj.interactable && obj.contains(position.x, position.y)) {
+        if (obj.interactable && obj.contains(x, y)) {
             obj.mouseOver();
             this.currentMouseOver = obj;
             return;

@@ -3,13 +3,23 @@ function LightLayer(level) {
 
     this.lightingPos = { x: 0, y: 0 };
 
-    this.width = game.width;
-
-    this.height = game.height;
-
     this.level = level
 
     this.gradient = null;
+
+    this.iterations = 7;
+    
+    this.sizeVar = 20;
+
+    this.minSize = 50;
+
+    this.minAlpha = 0.02
+
+    this.attenuation = this.minSize + this.sizeVar * this.iterations;
+
+    this.width = game.width;
+
+    this.height = game.height;
 
     this.lightCanvas = document.createElement('canvas');
     
@@ -18,6 +28,8 @@ function LightLayer(level) {
     this.lightCanvas.height = game.height;
 
     this.lightContext = this.lightCanvas.getContext('2d');
+
+    this.ambientLight = '#353535';
 };
 
 
@@ -25,59 +37,47 @@ inherit(LightLayer, GameObject);
 ctor(LightLayer);
 
 LightLayer.prototype.setLightSource = function(x,y) {
+    
     this.lightingPos.x = x;
+
     this.lightingPos.y = y;
+    
+    this.x = this.lightingPos.x - this.width/2;
+
+    this.y = this.lightingPos.y - this.height/2;
 }
 
-LightLayer.prototype.render = function(context) {
+LightLayer.prototype.renderLightRadius = function(context) {
 
-    var oldBlendingMode = this.lightContext.globalCompositeOperation;
-
-    var ambientColor = '#777777'
-
-    this.lightContext.fillStyle = ambientColor;
-
-    this.lightContext.fillRect(0, 0, game.width,game.height);
-
-    this.lightContext.fillStyle = '#ffffff';
+   this.lightContext.fillStyle = '#ffffff';
 
     this.lightContext.beginPath()
 
-    var iterations = 7;
-    
-    var sizeVar = 50;
-
-    var minSize = 50;
-
-    var minAlpha = 0.05
-
-    for(var i=0;i<=iterations;i++)
+    for(var i=0;i<=this.iterations;i++)
     {
-        this.lightContext.globalAlpha = minAlpha + (1-minAlpha) * 1/(i+1) * 1/(i+1);
+        this.lightContext.globalAlpha = this.minAlpha + (1-this.minAlpha) * 1/(i+1) * 1/(i+1);
 
-        var size = minSize + sizeVar * i;
+        var size = this.minSize + this.sizeVar * i;
 
-        this.lightContext.arc(this.lightingPos.x, this.lightingPos.y, size, 0, Math.PI * 2)
+        this.lightContext.arc(this.width/2, this.height/2, size, 0, Math.PI * 2)
 
         this.lightContext.fill();
     }
 
     this.lightContext.closePath();
+ }
 
-    this.lightContext.fillStyle = ambientColor;
+LightLayer.prototype.render = function(context) {
 
-    this.lightContext.globalAlpha = 1;
+    this.lightContext.clearRect(0, 0, this.width, this.height);
 
-    var attenuation = minSize + sizeVar * iterations;
+    this.lightContext.fillStyle = this.ambientLight;
 
-    this.width = attenuation*2;
+    this.lightContext.fillRect(0, 0, this.width, this.height);
 
-    this.height = attenuation*2;
+    this.renderLightRadius(this.lightContext);
 
-    this.x = this.lightingPos.x - this.width/2;
-
-    this.y = this.lightingPos.y - this.height/2;
-
+    this.lightContext.setTransform(1, 0, 0, 1, -this.x, -this.y);
 
     this.level.renderList.forEach(function (obj) {
         if(obj instanceof BrickSprite && obj.visible){
@@ -88,9 +88,9 @@ LightLayer.prototype.render = function(context) {
 
             var distanceSqr = mathHelper.distanceSqr(closest.x, closest.y, this.lightingPos.x, this.lightingPos.y);
 
-            if(distanceSqr > attenuation*attenuation)
+            if(distanceSqr > this.attenuation*this.attenuation)
             {
-                this.lightContext.fillRect(obj.x,obj.y,obj.width,obj.height);
+                this.lightContext.fillRect(obj.x, obj.y, obj.width, obj.height);
 
                 return;
             }
@@ -105,6 +105,10 @@ LightLayer.prototype.render = function(context) {
             {
                 return
             }
+            
+            this.lightContext.fillStyle = this.ambientLight;
+
+            this.lightContext.globalAlpha = 1;
 
             this.lightContext.beginPath();
             
@@ -130,27 +134,22 @@ LightLayer.prototype.render = function(context) {
 
             this.lightContext.lineTo(closest.x + (closest.x - this.lightingPos.x)*distance, closest.y + (closest.y - this.lightingPos.y)*distance);
 
-            this.lightContext.lineTo(closest.x, closest.y)
+            this.lightContext.lineTo(closest.x, closest.y);
             
-            this.lightContext.fill()
+            this.lightContext.fill();
 
-            this.lightContext.closePath()
-
-            var x = obj.x - this.lightingPos.x;
-            var y = obj.y - this.lightingPos.y;
+            this.lightContext.closePath();
         }
+
     }.bind(this));
 
-    this.lightContext.globalCompositeOperation = oldBlendingMode;
-
-    
-
+    this.lightContext.setTransform(1, 0, 0, 1, 1, 1);
 
     var oldBlendingMode = context.globalCompositeOperation;
 
     context.globalCompositeOperation = 'overlay';
 
-    context.drawImage(this.lightCanvas, 0, 0, game.width, game.height);
+    context.drawImage(this.lightCanvas, this.x, this.y, this.lightCanvas.width, this.lightCanvas.height);
 
     context.globalCompositeOperation = oldBlendingMode;
 }

@@ -1,4 +1,4 @@
-function EffectsLayer(particleCount) {
+function EffectsLayer(particleCount, camera) {
     GameObject.call(this, 0, 0);
 
     this.effectsCanvas = document.createElement('canvas');
@@ -6,6 +6,8 @@ function EffectsLayer(particleCount) {
     this.effectsCanvas.width = game.width;
     
     this.effectsCanvas.height = game.height;
+
+    this.camera = camera;
 
     this.effectsContext = this.effectsCanvas.getContext('2d');
 
@@ -97,4 +99,6 @@ EffectsLayer.prototype.render = function(context) {
     context.drawImage(this.effectsCanvas, 0, 0, game.width, game.height);
 
     context.globalCompositeOperation = oldBlendingMode;
+
+    this.effectsContext.setTransform(1, 0, 0, 1, 1, 1);
 }

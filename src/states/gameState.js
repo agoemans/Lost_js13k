@@ -33,7 +33,7 @@ Game.prototype.enter = function (config) {
 
     this.add(this.player);
 
-    this.effectsLayer = new EffectsLayer(100)
+    this.effectsLayer = new EffectsLayer(100, this.camera)
 
     this.add(this.effectsLayer);
 
