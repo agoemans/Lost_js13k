@@ -12,7 +12,7 @@ function Hud(resources) {
         this.hearts.push(heart);
     }
 
-    this.goals = new Text(canvasWidth - 80, 10, 35, "Trebuchet MS", 0 + " / 3");
+    this.goals = new Label(canvasWidth - 80, 10, 35, "Trebuchet MS", 0 + " / 3");
     this.goals.color = '#fff';
 
 };

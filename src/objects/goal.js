@@ -1,5 +1,5 @@
 function Goal(config) {
-    Sprite.call(this, config.x, config.y, 'assets/bomb.png');
+    Sprite.call(this, config.x, config.y, 'assets/wall2.png');
     this.goalResource = config.resources.get('goals');
     this.onGoalReached = null;
     this.baseY = config.y;
