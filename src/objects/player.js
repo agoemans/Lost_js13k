@@ -1,7 +1,7 @@
 function Player(x, y) {
     Sprite.call(this, x, y, 'assets/character.png', 4, 4);
 
-    this.walkSpeed = 300;
+    this.walkSpeed = 200;
     this.moveDirX = 0;
     this.moveDirY = 0;
     this.inputLocked = false;

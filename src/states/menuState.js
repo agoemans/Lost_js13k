@@ -10,7 +10,7 @@ Menu.prototype.enter = function () {
     game.audio.add('start', 1, [[2, , 0.18, , , 0.23, , , , , , , , , , , , , 1, , , 0.1, , 0.3]]);
 
     State.prototype.enter.call(this);
-    var text = new Label(canvasWidth / 2 - 250, canvasHeight / 5, 120, "Trebuchet MS", "Grav Bot");
+    var text = new Label(canvasWidth / 2 - 110, canvasHeight / 5, 120, "Trebuchet MS", "Lost");
     this.add(text);
 
     this.playButton = new Label(canvasWidth / 2 - 50, 3 * canvasHeight / 5, 60, "Trebuchet MS ", "Play");
