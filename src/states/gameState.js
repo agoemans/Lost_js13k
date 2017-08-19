@@ -43,7 +43,7 @@ Game.prototype.levelLoaded = function (renderList) {
 
     this.add(this.player);
 
-    this.effectsLayer = new EffectsLayer(1000, this.camera, this.level)
+    this.effectsLayer = new EffectsLayer(this.level.tilesX * this.level.tilesY / 10, this.camera, this.level)
 
     this.add(this.effectsLayer);
 
