@@ -49,7 +49,7 @@ var tileFinder = (function () {
 
     return {
         tileArray: [],
-        find: function (row, col, array) {
+        find: function (col, row, array) {
             console.log('this.arrayNulls', arrayWithNulls);
             return findNullNeighbors(row, col, array);
         }

@@ -55,13 +55,6 @@ BrickSprite.prototype.onClickBrick = function (array) {
     console.log('onClickBrick', this.nearbyBombs);
     this.disableInput();
 
-    if(this.nearbyBombs === 0){
-        this.hide();
-        this.tileFinder.find(this.row, this.col, array);
-    }
-    else {
-        this.image.src = this.altImgSrc;
-    }
     if(this.hasBomb){
         gameOverHelper.execute();
     }

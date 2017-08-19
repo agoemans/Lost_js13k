@@ -81,10 +81,12 @@ var gridCreator = (function () {
 
         for (var i = minY; i <= maxY; i++) {
             if (i == hole) {
-                grid[i][x] = '_';
+                grid[i][x] = 'H';
+                console.log('canChange _', x, i, checkAllSides(i, x, '_', grid));
             }
             else {
                 grid[i][x] = "W";
+                console.log('canChange W', x, i, checkAllSides(i, x, 'W', grid));
             }
         }
     }
@@ -95,16 +97,35 @@ var gridCreator = (function () {
 
         for (var i = minX; i <= maxX; i++) {
             if (i == hole) {
-                grid[y][i] = '_';
+                grid[y][i] = 'H';
+                console.log('canChange _', y, i, checkAllSides(y, i, '_', grid));
             }
             else {
                 grid[y][i] = "W";
+                console.log('canChange W', y, i, checkAllSides(y, i, 'W', grid));
 
             }
         }
     }
 
-    function checkAllSides(grid, c, r) {
+    function checkNeighborCell(col, row, marker, grid) {
+        marker = 'H';
+        if(col == -1 || row == -1 || grid[col] == undefined || grid[col][row] == undefined) { return false; }
+        if(grid[col][row] !== -1 && grid[col][row] !== marker){
+            return true;
+        }
+        return false;
+    }
+
+    function checkAllSides(col, row, marker, grid) {
+        var canChange = false;
+
+        canChange = checkNeighborCell(col - 1, row, marker, grid);
+        canChange = checkNeighborCell(col, row - 1, marker, grid);
+        canChange = checkNeighborCell(col, row + 1, marker, grid);
+        canChange = checkNeighborCell(col + 1, row + 1, marker, grid);
+
+        return canChange;
 
     }
 

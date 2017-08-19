@@ -4,7 +4,7 @@ function TileCreator() {
 TileCreator.prototype.tile = BrickSprite;
 
 TileCreator.prototype.createTile = function (config) {
-    if (config.type === '_' || config.type === 0) {
+    if (config.type === '_' || config.type === 0 || config.type === 'H') {
         return null;
     }
 
