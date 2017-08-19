@@ -1,4 +1,4 @@
-function Level(number) {
+function Level(resources) {
     this.tileSize = 64;
     this.xOffset = 1;
     this.yOffset = 1;
@@ -13,7 +13,6 @@ function Level(number) {
     this.width = 0;
     this.height = 0;
 
-
     // Sample level
     this.tiles = [];
 
@@ -22,8 +21,10 @@ function Level(number) {
     this.bgLayer = [];
     this.renderList = [];
 
+    this.resources = resources;
+
     //determine if read level from file or generated
-    this.generated = false;
+    this.generated = true;
 
     this.tileCreator = new TileCreator();
 
@@ -55,9 +56,10 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 
 Level.prototype.levelLoaded = function (data) {
     this.tiles = data;
+    goalHelper.setGoalsInArray(this.tiles);
     this.processLevel();
 
-   // console.log('tileobj', this.tileObects);
+   console.log(this.tiles);
 }
 
 Level.prototype.processFileData = function (data) {
@@ -112,6 +114,8 @@ Level.prototype.processLevel = function () {
     this.width = this.tilesX * this.tileSize;
     this.height = this.tilesY * this.tileSize;
 
+    console.log('this.tileObects', this.tileObects);
+
     this.onCompleteCallback.call(this.onCompleteCtx, this.renderList);
 };
 
@@ -122,7 +126,7 @@ Level.prototype.addTile = function (char, x, y) {
 
     //create brick obj first
     object = this.tileCreator.createTile({
-        type: char, x: pX, y: pY, row: x, col: y
+        type: char, x: pX, y: pY, row: x, col: y, resources: this.resources
     });
 
     if (object instanceof BrickSprite){

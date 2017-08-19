@@ -19,7 +19,7 @@ HealthPickup.prototype.collide = function (other) {
         this.collides = false;
         this.destroy();
         
-        this.healthResource.add(1)
+        this.healthResource.add(1);
 
         game.audio.play('key');
     }

@@ -1,7 +1,7 @@
 function Game() {
     State.call(this);
 
-    this.resources = new Resources()
+    this.resources = new Resources();
 
     this.level = null;
     this.cameraOffset = 0;
@@ -21,7 +21,7 @@ Game.prototype.enter = function (config) {
     var level = getUrlParameter('level') || config.level;
     var levelInt = parseInt(level);
 
-    this.level = new Level();
+    this.level = new Level(this.resources);
 
     this.level.load(levelInt, this.addToRenderList, this);
 

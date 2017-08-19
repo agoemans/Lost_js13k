@@ -81,10 +81,10 @@ var gridCreator = (function () {
 
         for (var i = minY; i <= maxY; i++) {
             if (i == hole) {
-                grid[i][x] = 'X';
+                grid[i][x] = '_';
             }
             else {
-                grid[i][x] = "Y";
+                grid[i][x] = "W";
             }
         }
     }
@@ -95,16 +95,20 @@ var gridCreator = (function () {
 
         for (var i = minX; i <= maxX; i++) {
             if (i == hole) {
-                grid[y][i] = 'X';
+                grid[y][i] = '_';
             }
             else {
-                grid[y][i] = "Y";
+                grid[y][i] = "W";
+
             }
         }
     }
 
-    function subDivideArea(horizontal, minR, minC, maxR, maxC, grid) {
+    function checkAllSides(grid, c, r) {
 
+    }
+
+    function subDivideArea(horizontal, minR, minC, maxR, maxC, grid) {
         var myHoriz = !horizontal;
         var x, y;
 
