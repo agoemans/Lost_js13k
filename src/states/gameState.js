@@ -23,31 +23,31 @@ Game.prototype.enter = function (config) {
 
     this.level = new Level(this.resources);
 
-    this.level.load(levelInt, this.addToRenderList, this);
+    this.level.load(levelInt, this.levelLoaded, this);
+
+    gameOverHelper.register(this.showGameOver, this);
+};
+
+Game.prototype.levelLoaded = function (renderList) {
+    for(var i = 0; i < renderList.length; i++){
+        if(renderList[i] instanceof BrickSprite){
+            this.add(renderList[i]);
+        }
+    }
 
     this.lightLayer = new LightLayer(this.level);
-
+    
     this.add(this.lightLayer);
 
     this.player = new Player(100,100);
 
     this.add(this.player);
 
-    this.effectsLayer = new EffectsLayer(100, this.camera)
+    this.effectsLayer = new EffectsLayer(1000, this.camera, this.level)
 
     this.add(this.effectsLayer);
 
     this.hud = new Hud(this.resources);
-
-    gameOverHelper.register(this.showGameOver, this);
-};
-
-Game.prototype.addToRenderList = function (renderList) {
-    for(var i = 0; i < renderList.length; i++){
-        if(renderList[i] instanceof BrickSprite){
-            this.add(renderList[i]);
-        }
-    }
 };
 
 Game.prototype.showGameOver = function () {

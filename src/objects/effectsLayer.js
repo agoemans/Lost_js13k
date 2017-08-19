@@ -1,4 +1,4 @@
-function EffectsLayer(particleCount, camera) {
+function EffectsLayer(particleCount, camera, level) {
     GameObject.call(this, 0, 0);
 
     this.effectsCanvas = document.createElement('canvas');
@@ -8,6 +8,8 @@ function EffectsLayer(particleCount, camera) {
     this.effectsCanvas.height = game.height;
 
     this.camera = camera;
+
+    this.level = level;
 
     this.effectsContext = this.effectsCanvas.getContext('2d');
 
@@ -31,9 +33,9 @@ ctor(EffectsLayer);
 
 EffectsLayer.prototype.setupParticle = function(particle)
 {
-    particle.x = Math.random() * game.width;
+    particle.x = Math.random() * this.level.width;
 
-    particle.y = Math.random() * game.height;
+    particle.y = Math.random() * this.level.height;
 
     particle.width = 1;
 
@@ -65,9 +67,9 @@ EffectsLayer.prototype.updateParticle = function(deltaSeconds, particle) {
 
     particle.height = (1-particle.time/particle.lifeTime) * particle.targetHeight;
 
-    particle.x = particle.x % game.width;
+    particle.x = particle.x % this.level.width;
 
-    particle.y = particle.y % game.height;
+    particle.y = particle.y % this.level.height;
 
     if(particle.time <= 0)
     {
@@ -86,7 +88,11 @@ EffectsLayer.prototype.render = function(context) {
     this.effectsContext.clearRect(0,0,game.width,game.height)
 
     this.effectsContext.fillStyle = '#ffffff';
-    
+
+    var position = this.camera.transform(0,0);
+
+    this.effectsContext.setTransform(1,0,0,1,-position.x,-position.y);
+
     this.whiteFlakes.forEach(function (particle) {
         this.effectsContext.globalAlpha = particle.time/particle.lifeTime;
         particle.render(this.effectsContext);
@@ -94,11 +100,17 @@ EffectsLayer.prototype.render = function(context) {
 
     var oldBlendingMode = context.globalCompositeOperation;
 
-    context.globalCompositeOperation = 'source-over';
+    context.save();
+
+    context.setTransform(1,0,0,1,0,0);
+
+    //context.globalCompositeOperation = 'source-over';
 
     context.drawImage(this.effectsCanvas, 0, 0, game.width, game.height);
 
-    context.globalCompositeOperation = oldBlendingMode;
+    //context.globalCompositeOperation = oldBlendingMode;
+
+    context.restore();
 
     this.effectsContext.setTransform(1, 0, 0, 1, 1, 1);
 }

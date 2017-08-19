@@ -1,6 +1,4 @@
 var gridCreator = (function () {
-    var outerArrLength = 12;
-    var innerArrLength = 12;
 
     function createBaseGrid(outerArr, innerArr) {
         //first creates the num by num grid with random num of bombs
@@ -237,7 +235,7 @@ var gridCreator = (function () {
     return {
         grid: [],
         create: function () {
-            return createFullMazeGrid(15, 15);
+            return createFullMazeGrid(100, 100);
 
         }
     }
