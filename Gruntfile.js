@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			scripts: {
-				files: ['assets/*.txt', '!assets/levels.txt', 'src/**/*.js', 'htmlFile/index.html'],
+				files: ['assets/*.txt', 'assets/*.png', 'assets/*.jpg', '!assets/levels.txt', 'src/**/*.js', 'htmlFile/index.html'],
 				tasks: ['clean:dev',
                     'uglify:development',
                     'copy:dev',
@@ -95,6 +95,7 @@ module.exports = function(grunt) {
 			dev: {
                 files: [
 					{expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/dev/assets'},
+					{expand: true, flatten: true, src: ['assets/*.jpg'], dest: 'build/dev/assets'},
                     {expand: true, flatten: true, src: ['assets/level1.txt'], dest: 'build/dev/assets', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['build/compiled.js*'], dest: 'build/dev/src', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/dev', filter: 'isFile'}
@@ -103,6 +104,7 @@ module.exports = function(grunt) {
 			prod: {
                 files: [
 					{expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/prod/assets'},
+					{expand: true, flatten: true, src: ['assets/*.jpg'], dest: 'build/dev/assets'},
                     {expand: true, flatten: true, src: ['assets/level1.txt'], dest: 'build/prod/assets', filter: 'isFile'},
                     //{expand: true, flatten: true, src: ['build/compiled.js'], dest: 'build/prod/src', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/prod', filter: 'isFile'}

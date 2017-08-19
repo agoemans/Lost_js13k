@@ -1,9 +1,9 @@
 function BrickSprite(config) {
-    Sprite.call(this, config.x, config.y, "assets/wall2.png");
+    Sprite.call(this, config.x, config.y, "assets/wall2.jpg");
     this.hasBomb = (config.type === 'b');
     this.nearbyBombs = (config.type !== 'b' ? config.type: 1);
     this.altImgSrc = null;
-    this.image.src = (config.type === 'G' ? 'assets/bomb.png' : 'assets/wall2.png');
+    this.image.src = (config.type === 'G' ? 'assets/bomb.png' : 'assets/wall2.jpg');
     this.isFlagged = false;
     this.canClick = false;
     this.tint = '2277aa';
