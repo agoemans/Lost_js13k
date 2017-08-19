@@ -10,8 +10,8 @@ var gridCreator = (function () {
             var innerList = [];
             for (var y = 0; y < innerArr; y++) {
                 var yValue = 0;
-                // var randomX = getRandomNumber(12) | 2;
-                // var randomY = getRandomNumber(12) | 2;
+                // var randomX = mathHelper.getRandomNumber(12) | 2;
+                // var randomY = mathHelper.getRandomNumber(12) | 2;
                 // console.log(randomX, randomY);
                 // if (randomY % 2 == 0 && randomX % 2 == 0 && index != limit) {
                 //     //create b or mines at random points
@@ -75,8 +75,8 @@ var gridCreator = (function () {
         })
     }
 
-    function addVWall(minY, maxY, x, grid, hole) {
-        var hole = getRandomNumber(minY, maxY);
+    function addVWall(minY, maxY, x, grid) {
+        var hole = mathHelper.getRandomNumber(minY, maxY);
         console.log('VWall', minY, maxY, x, 'hole = ', hole);
 
         for (var i = minY; i <= maxY; i++) {
@@ -91,8 +91,8 @@ var gridCreator = (function () {
         }
     }
 
-    function addHWall(minX, maxX, y, grid, hole) {
-        var hole = getRandomNumber(minX, maxX);
+    function addHWall(minX, maxX, y, grid) {
+        var hole = mathHelper.getRandomNumber(minX, maxX);
         console.log('HWall', minX, maxX, y, 'hole = ', hole);
 
         for (var i = minX; i <= maxX; i++) {
@@ -134,7 +134,7 @@ var gridCreator = (function () {
         var x, y;
 
         if ((maxR - minR) > 3 && horizontal) {
-            // y = getRandomNumber(minR + 1, maxR - 1);
+            // y = mathHelper.getRandomNumber(minR + 1, maxR - 1);
             y = getRow(minR + 1, maxR - 1, grid);
             addHWall(minC, maxC, y, grid);
 
@@ -146,7 +146,7 @@ var gridCreator = (function () {
         }
 
         if ((maxC - minC) > 3 && !horizontal) {
-            // x = getRandomNumber(minC + 1, maxC - 1);
+            // x = mathHelper.getRandomNumber(minC + 1, maxC - 1);
             x = getCol(minC + 1, maxC - 1, grid);
             addVWall(minR, maxR, x, grid);
 
@@ -158,19 +158,19 @@ var gridCreator = (function () {
     }
 
     function getRow(min, max, grid){
-        var y = getRandomNumber(min, max);
+        var y = mathHelper.getRandomNumber(min, max);
         var minEnd = grid[y][min - 1];
         var maxEnd = grid[y][max + 1];
         console.log('minEnd, maxend', minEnd, maxEnd);
         while(minEnd == 'X' || maxEnd == 'X'){
-            y = getRandomNumber(min, max);
+            y = mathHelper.getRandomNumber(min, max);
             minEnd = grid[y][min - 1];
             maxEnd = grid[y][max + 1];
             // console.log('looping min max adn x', minEnd, maxEnd, x);
             // if(minEnd != 'X' && maxEnd != 'X'){
             //     break;
             // } else {
-            //     y = getRandomNumber(min, max);
+            //     y = mathHelper.getRandomNumber(min, max);
             //     minEnd = grid[y][min - 1];
             //     maxEnd = grid[y][max + 1];
             //     console.log('looping min max adn x', minEnd, maxEnd, x);
@@ -180,19 +180,19 @@ var gridCreator = (function () {
     }
 
     function getCol(min, max, grid){
-        var x = getRandomNumber(min, max);
+        var x = mathHelper.getRandomNumber(min, max);
         var minEnd = grid[min - 1][x];
         var maxEnd = grid[max + 1][x];
         console.log('minEnd, maxend', minEnd, maxEnd);
         while(minEnd == 'X' || maxEnd == 'X'){
-            x = getRandomNumber(min, max);
+            x = mathHelper.getRandomNumber(min, max);
             minEnd = grid[min - 1][x];
             maxEnd = grid[max + 1][x];
             //console.log('looping min max and x', minEnd, maxEnd, x);
             // if(minEnd != 'X' && maxEnd != 'X'){
             //     break;
             // } else {
-            //     x = getRandomNumber(min, max);
+            //     x = mathHelper.getRandomNumber(min, max);
             //     minEnd = grid[min - 1][x];
             //     maxEnd = grid[max + 1][x];
             //     console.log('looping min max and x', minEnd, maxEnd, x);
@@ -232,13 +232,6 @@ var gridCreator = (function () {
 
             });
         });
-    }
-
-    function getRandomNumber(min, max) {
-        //todo move this to separate helper
-        // var max = Math.floor(outerArrLength / 2);
-        // var min = max - 2;
-        return Math.floor(Math.random() * (max - min) + min);
     }
 
     return {

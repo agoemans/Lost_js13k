@@ -8,6 +8,9 @@ var mathHelper = (function() {
         },
         dot: function(x1,y1,x2,y2){
             return x1*x2 + y1*y1;
+        },
+        getRandomNumber: function(min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
         }
     }
 })();

@@ -15,14 +15,14 @@ Popup.prototype.enter = function (config) {
     this.height = 150;
     this.clear();
 
-    var text = new Text(this.width / 2 - 50, 6, 28, "Trebuchet MS", config.title);
+    var text = new Label(this.width / 2 - 50, 6, 28, "Trebuchet MS", config.title);
     text.color = "#222";
     this.add(text);
 
     var height = 100;
     var lineHeight = 40;
     config.lines.forEach(function (line) {
-        text = new Text(this.width / 2 - 160, height, 24, "Trebuchet MS ", line);
+        text = new Label(this.width / 2 - 160, height, 24, "Trebuchet MS ", line);
         this.add(text);
         height += lineHeight;
         this.height += lineHeight;

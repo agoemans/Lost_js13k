@@ -1,4 +1,4 @@
-function Text(x, y, size, font, text) {
+function Label(x, y, size, font, text) {
     GameObject.call(this, x, y);
 
     this.interactable = false;
@@ -10,17 +10,17 @@ function Text(x, y, size, font, text) {
     this.visible = true;
 };
 
-inherit(Text, GameObject);
+inherit(Label, GameObject);
 
-Text.prototype.update = function (deltaSeconds) {
+Label.prototype.update = function (deltaSeconds) {
 
 };
 
-Text.prototype.enableInput = function () {
+Label.prototype.enableInput = function () {
     this.interactable = true;
 };
 
-Text.prototype.render = function (context) {
+Label.prototype.render = function (context) {
     if (!this.visible)
         return;
 
@@ -33,4 +33,4 @@ Text.prototype.render = function (context) {
     context.fillText(this.text, this.x, this.y + this.height);
 };
 
-ctor(Text);
+ctor(Label);

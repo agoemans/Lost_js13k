@@ -10,10 +10,10 @@ Menu.prototype.enter = function () {
     game.audio.add('start', 1, [[2, , 0.18, , , 0.23, , , , , , , , , , , , , 1, , , 0.1, , 0.3]]);
 
     State.prototype.enter.call(this);
-    var text = new Text(canvasWidth / 2 - 250, canvasHeight / 5, 120, "Trebuchet MS", "Grav Bot");
+    var text = new Label(canvasWidth / 2 - 250, canvasHeight / 5, 120, "Trebuchet MS", "Grav Bot");
     this.add(text);
 
-    this.playButton = new Text(canvasWidth / 2 - 50, 3 * canvasHeight / 5, 60, "Trebuchet MS ", "Play");
+    this.playButton = new Label(canvasWidth / 2 - 50, 3 * canvasHeight / 5, 60, "Trebuchet MS ", "Play");
     this.playButton.enableInput();
 
     loadFile(function (data) {
@@ -29,7 +29,7 @@ Menu.prototype.enter = function () {
         game.goto("game", {level: topLevel});
     };
 
-    text = new Text(canvasWidth / 2 - 130, canvasHeight - 40, 20, "Trebuchet MS", "by David & Amy Goemans");
+    text = new Label(canvasWidth / 2 - 130, canvasHeight - 40, 20, "Trebuchet MS", "by David & Amy Goemans");
     this.add(text);
 };
 

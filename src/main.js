@@ -20,11 +20,15 @@ var game = (function () {
         module.width = w;
         module.height = h;
         module.audio = new AudioPlayer();
-        module.states["menu"] = new Menu();
-        module.states["game"] = new Game();
-        module.states["pp"] = new Popup();
+        module.addState("menu", new Menu());
+        module.addState("game", new Game());
+        module.addState("pp", new Popup());
         module.goto("menu");
     };
+
+    module.addState = function(name, state) {
+        module.states[name] = state;
+    }
 
     module.updateGame = function (deltaSeconds) {
         module.activeState.update(deltaSeconds);

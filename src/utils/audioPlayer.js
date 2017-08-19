@@ -13,7 +13,7 @@ AudioPlayer.prototype.add = function (key, count, settings) {
         });
         for (var i = 0; i < count; i++) {
             var audio = new Audio();
-            audio.src = jsfxr(elem);
+            audio.src = window.jsfxr(elem);
             this.sounds[key][index].pool.push(audio);
         }
     }, this);

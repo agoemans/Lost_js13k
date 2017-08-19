@@ -9,3 +9,5 @@ var canvasHeight = 768;
 
 var localCanvas = null;
 var localContext = null;
+
+var localStorage = window.localStorage || {};

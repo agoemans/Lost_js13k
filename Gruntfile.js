@@ -1,13 +1,22 @@
 module.exports = function(grunt) {
 
+	require('google-closure-compiler').grunt(grunt);
+
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		connect:{
-			server:{
+			dev:{
 				options: {
 					port: 8000,
 					base:'build/dev'
+				}
+			},
+			prod:{
+				options: {
+					port: 8001,
+					base:'build/prod',
+					keepalive: true
 				}
 			}
 		},
@@ -15,11 +24,10 @@ module.exports = function(grunt) {
 			scripts: {
 				files: ['assets/*.txt', '!assets/levels.txt', 'src/**/*.js', 'htmlFile/index.html'],
 				tasks: ['clean:dev',
-                    'concat',
                     'uglify:development',
                     'copy:dev',
-                    'clean:compiled',
-                    'clean:tmp']
+					'clean:compiled'
+				]
 			}
 		},
 		uglify: {
@@ -32,18 +40,7 @@ module.exports = function(grunt) {
 					}
 				},
 				files: {
-		            'build/compiled.js': ['src/core/coreGlobals.js',
-		            	'src/gameFramework.js',
-						'src/core/common.js',
-						'src/main.js',
-						'src/core/readAJAX.js',
-                        'src/core/gameObject.js',
-						'src/core/sprite.js',
-                        'src/core/text.js',
-                        'src/core/particle.js',
-						'src/core/particleEmitter.js',
-						'src/core/state.js',
-						'src/**/*.js']
+		            'build/compiled.js': [ 'src/**/*.js']
 				}
 			},
 			compressed: {
@@ -51,21 +48,11 @@ module.exports = function(grunt) {
 					mangle: true,
 					compress: {
 						//TODO: Optimize using compressor options (https://github.com/mishoo/UglifyJS2#compressor-options)
-					}
+					},
+					sourceMap: false
 				},
 				files: {
-					'build/compiled.js': ['src/core/coreGlobals.js',
-						'src/gameFramework.js',
-						'src/common.js',
-						'src/main.js',
-						'src/readAJAX.js',
-						'src/gameObject.js',
-						'src/sprite.js',
-						'src/text.js',
-						'src/particle.js',
-						'src/particleEmitter.js',
-						'src/state.js',
-						'src/**/*.js']
+					'build/compiled.js': [ 'src/**/*.js' ]
 				}
 			}
 		},
@@ -99,74 +86,12 @@ module.exports = function(grunt) {
 					expand: true,
 					flatten: true,
 					cwd: './',
-					src: ['build/**/*.*'],
+					src: ['build/prod/**/*.*'],
 					dest: './'
 				}]
 			}
 		},
-        concat: {
-			options: {},
-			levels: {
-				src: [
-					'assets/level1.txt',
-					'assets/level2.txt',
-					'assets/level3.txt',
-					'assets/level4.txt',
-					'assets/level5.txt',
-					'assets/level6.txt',
-					'assets/level7.txt',
-					'assets/level8.txt',
-					'assets/level9.txt',
-					'assets/level10.txt',
-					'assets/level11.txt',
-					'assets/level12.txt',
-					'assets/level13.txt',
-					'assets/level14.txt',
-                    'assets/level15.txt',
-                    'assets/level16.txt'
-				],
-				dest: 'tmp/levels.txt',
-				options: {
-					separator: '&'
-				}
-			},
-			source: {
-                src: ['src/core/coreGlobals.js',
-                	'src/gameFramework.js',
-                    'src/core/common.js',
-                    'src/main.js',
-                    'src/core/readAJAX.js',
-                    'src/core/gameObject.js',
-                    'src/core/sprite.js',
-                    'src/core/text.js',
-                    'src/core/particle.js',
-                    'src/core/particleEmitter.js',
-                    'src/core/state.js',
-                    'src/**/*.js'],
-                dest: 'build/compiled.js'
-            }
-        },
-        replace: {
-            assets: {
-                src: ['build/*.js'],
-                overwrite: true,                 // overwrite matched source files
-                replacements: [{
-                    from: "assets/",
-                    to: ""
-                }]
-            }
-        },
 		copy: {
-			assets: {
-				files: [
-					{expand: true, flatten: true, src: ['assets/*'], dest: 'build/prod', filter: 'isFile'}
-				]
-			},
-            levels: {
-                files: [
-                    {expand: true, flatten: true, src: ['assets/levels.txt'], dest: 'build/prod', filter: 'isFile'}
-                ]
-            },
 			dev: {
                 files: [
 					{expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/dev/assets'},
@@ -174,28 +99,58 @@ module.exports = function(grunt) {
                     {expand: true, flatten: true, src: ['build/compiled.js*'], dest: 'build/dev/src', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/dev', filter: 'isFile'}
                 ]
+			},
+			prod: {
+                files: [
+					{expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/prod/assets'},
+                    {expand: true, flatten: true, src: ['assets/level1.txt'], dest: 'build/prod/assets', filter: 'isFile'},
+                    //{expand: true, flatten: true, src: ['build/compiled.js'], dest: 'build/prod/src', filter: 'isFile'},
+                    {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/prod', filter: 'isFile'}
+                ]
 			}
 		},
         clean: {
             compiled: ["build/compiled.js"],
             build: ["build/game.zip"],
-            dev: ["build/dev/*"],
-			tmp: ["tmp/**"]
-
-        }
+			dev: ["build/dev/*"],
+			prod: ["build/prod/*"]
+		},
+		'closure-compiler': {
+			compress: {
+				closurePath: './',
+				files: {
+				'build/compiled.js' : ['src/**/*.js']
+				},
+				options: {
+					
+					compilation_level: 'SIMPLE',
+					dependency_mode: 'LOOSE',
+					language_in: 'ECMASCRIPT5_STRICT'
+				}
+			},
+			compiled: {
+				closurePath: './',
+				files: {
+				'build/prod/src/compiled.js' : ['build/compiled.js']
+				},
+				options: {
+					
+					compilation_level: 'SIMPLE',
+					language_in: 'ECMASCRIPT5_STRICT'
+				}
+			}
+		}
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-text-replace');
 	grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-htmlmin');
 	grunt.loadNpmTasks('grunt-contrib-compress');
-	grunt.loadNpmTasks('grunt-closure-compiler');
+
+	grunt.registerTask('default', ['dev']);
 
 	var fs = require('fs');
 	grunt.registerTask('sizeCheck', function() {
@@ -210,31 +165,33 @@ module.exports = function(grunt) {
 		});
 	});
 
-	grunt.registerTask('closure', ['closure-compiler']);
-	grunt.registerTask('default', ['watch']);
-	grunt.registerTask('levels', ['concat:levels']);
-	grunt.registerTask('build', [
-		'concat',
-		'copy:levels',
-		'replace',
-		'clean'
-	]);
-
     grunt.registerTask('dev', [
     	'clean:dev',
-        // 'concat',
         'uglify:development',
         'copy:dev',
-        'connect',
+        'connect:dev',
         'clean:compiled',
-        'clean:tmp',
         'watch'
-    ]);
-    grunt.registerTask('build-compress', [
-		'build',
+	]);
+
+	grunt.registerTask('prod-build', [
+    	'clean:prod',
+		'uglify:development',
+		'closure-compiler:compiled',
+        'copy:prod',
+        'clean:compiled'
+	]);
+
+	grunt.registerTask('prod', [
+		'prod-build',
+		'connect:prod'
+	]);
+
+    grunt.registerTask('13k', [
+		'prod-build',
 		'compress:main',
 		'sizeCheck'
 	]);
-	grunt.registerTask('zip', ['compress:main', 'sizeCheck']);
 
+	grunt.registerTask('zip', ['compress:main', 'sizeCheck']);
 };

@@ -49,4 +49,4 @@ Camera.prototype.isOnScreen = function(gameObject) {
 }
 
 
-ctor(Text);
+ctor(Camera);
