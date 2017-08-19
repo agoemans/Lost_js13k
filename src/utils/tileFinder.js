@@ -1,24 +1,11 @@
 var tileFinder = (function () {
     var arrayWithNulls = [];
     function findNullNeighbors(row, col, tileArray) {
-        //calculates mines around a box
-        // let arrayWithNulls = [];
         arrayWithNulls.push([row, col]);
 
         for (var i = 0; i < arrayWithNulls.length; i++) {
             updateAllDirections(arrayWithNulls[i][0], arrayWithNulls[i][1], tileArray);
         }
-
-        // for (var x = 0; x < tileArray.length; x++) {
-        //     for (var y = 0; y < tileArray[x].length; y++) {
-        //         var tileObj = tileArray[x][y];
-        //         if (tileObj instanceof BrickSprite && tileObj.nearbyBombs === 0){
-        //             updateAllDirections(tileArray, x, y);
-        //         }
-        //
-        //     }
-        //
-        // }
     }
 
     function updateTile(list, row, col) {
@@ -62,7 +49,7 @@ var tileFinder = (function () {
 
     return {
         tileArray: [],
-        find: function (row, col, array) {
+        find: function (col, row, array) {
             console.log('this.arrayNulls', arrayWithNulls);
             return findNullNeighbors(row, col, array);
         }

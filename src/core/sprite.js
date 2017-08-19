@@ -112,7 +112,7 @@ Sprite.prototype.doCollision = function (elapsed) {
 
         if (this.colliding.bottom || this.colliding.top) {
             this.velocity.y = 0;
-            console.log(this.colliding, bl, br)
+            //console.log(this.colliding, bl, br)
             steps = i;
             break;
         }

@@ -1,14 +1,17 @@
-function Goal(x, y) {
-    Sprite.call(this, x, y, 'assets/win.png');
+function Goal(config) {
+    Sprite.call(this, config.x, config.y, 'assets/bomb.png');
+    this.goalResource = config.resources.get('goals');
     this.onGoalReached = null;
-    this.baseY = y;
+    this.baseY = config.y;
 };
 
 inherit(Goal, Sprite);
 
 Goal.prototype.collide = function (other) {
     this.collides = false;
-    this.destroy();
+    // this.destroy();
+    this.goalResource.add(1);
+    this.image.src = 'assets/wall_w.png';
     if (this.onGoalReached) this.onGoalReached(this.x + this.width / 2, this.y + this.height / 2);
 };
 
