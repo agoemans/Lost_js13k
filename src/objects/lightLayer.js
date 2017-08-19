@@ -7,13 +7,13 @@ function LightLayer(level) {
 
     this.gradient = null;
 
-    this.iterations = 7;
+    this.iterations = 10;
     
-    this.sizeVar = 20;
+    this.sizeVar = 30;
 
     this.minSize = 50;
 
-    this.minAlpha = 0.02
+    this.minAlpha = 0.05
 
     this.attenuation = this.minSize + this.sizeVar * this.iterations;
 
@@ -29,7 +29,9 @@ function LightLayer(level) {
 
     this.lightContext = this.lightCanvas.getContext('2d');
 
-    this.ambientLight = '#353535';
+    this.ambientLight = '#15171f';
+
+    this.lightColor = '#ffeedd';
 };
 
 
@@ -49,7 +51,7 @@ LightLayer.prototype.setLightSource = function(x,y) {
 
 LightLayer.prototype.renderLightRadius = function(context) {
 
-   this.lightContext.fillStyle = '#ffffff';
+   this.lightContext.fillStyle = this.lightColor;
 
     this.lightContext.beginPath()
 
@@ -69,15 +71,19 @@ LightLayer.prototype.renderLightRadius = function(context) {
 
 LightLayer.prototype.render = function(context) {
 
-    this.lightContext.clearRect(0, 0, this.width, this.height);
-
     this.lightContext.fillStyle = this.ambientLight;
+
+    this.lightContext.globalAlpha = 1;
+
+    this.lightContext.clearRect(0, 0, this.width, this.height);
 
     this.lightContext.fillRect(0, 0, this.width, this.height);
 
     this.renderLightRadius(this.lightContext);
 
     this.lightContext.setTransform(1, 0, 0, 1, -this.x, -this.y);
+
+    var tilesInRange = [];
 
     this.level.renderList.forEach(function (obj) {
         if(obj instanceof BrickSprite && obj.visible){
@@ -88,10 +94,12 @@ LightLayer.prototype.render = function(context) {
 
             var distanceSqr = mathHelper.distanceSqr(closest.x, closest.y, this.lightingPos.x, this.lightingPos.y);
 
+            this.lightContext.fillStyle = this.ambientLight;
+
+            this.lightContext.globalAlpha = 1;
+            
             if(distanceSqr > this.attenuation*this.attenuation)
             {
-                this.lightContext.fillRect(obj.x, obj.y, obj.width, obj.height);
-
                 return;
             }
 
@@ -106,13 +114,13 @@ LightLayer.prototype.render = function(context) {
                 return
             }
             
-            this.lightContext.fillStyle = this.ambientLight;
-
-            this.lightContext.globalAlpha = 1;
-
             this.lightContext.beginPath();
             
             var distance = 500;
+
+            this.lightContext.fillStyle = this.ambientLight;
+            
+            this.lightContext.globalAlpha = 1;
 
             this.lightContext.moveTo(closest.x ,closest.y);
 
@@ -124,7 +132,7 @@ LightLayer.prototype.render = function(context) {
 
             this.lightContext.lineTo(closest.x, closest.y)
 
-            this.lightContext.fill()
+            this.lightContext.fill();
 
             this.lightContext.moveTo(closest.x ,closest.y);
 
@@ -139,15 +147,29 @@ LightLayer.prototype.render = function(context) {
             this.lightContext.fill();
 
             this.lightContext.closePath();
+
+            tilesInRange.push({ obj: obj, alpha: 1 - distanceSqr/(this.attenuation*this.attenuation) } );
         }
 
     }.bind(this));
+
+    tilesInRange.forEach(function(tile) {
+        this.lightContext.fillStyle = this.lightColor;
+        
+        this.lightContext.globalAlpha = tile.alpha/2;
+
+        this.lightContext.fillRect(tile.obj.x, tile.obj.y, tile.obj.width, tile.obj.height);
+    }.bind(this));
+
+    this.lightContext.fillStyle = this.ambientLight;
 
     this.lightContext.setTransform(1, 0, 0, 1, 1, 1);
 
     var oldBlendingMode = context.globalCompositeOperation;
 
-    context.globalCompositeOperation = 'overlay';
+    context.globalAlpha = 1;
+
+    context.globalCompositeOperation = 'multiply';
 
     context.drawImage(this.lightCanvas, this.x, this.y, this.lightCanvas.width, this.lightCanvas.height);
 
