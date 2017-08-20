@@ -22,6 +22,10 @@ TileCreator.prototype.createTile = function (config) {
         case 'H':
             this.tile = Door;
             break;
+        case 'BG':
+            console.log('create enemy');
+            this.tile = Enemy;
+            break;
         default:
             this.tile = BrickSprite;
             break;

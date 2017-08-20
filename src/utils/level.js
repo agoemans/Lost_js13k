@@ -54,6 +54,7 @@ Level.prototype.levelLoaded = function (data) {
 }
 
 Level.prototype.processLevel = function () {
+    console.log('process level');
     this.tilesX = this.tiles[0].length + 2;
     this.tilesY = this.tiles.length + 2;
 
@@ -111,6 +112,10 @@ Level.prototype.addTile = function (char, x, y) {
         object.onClick = function(){
             object.onClickBrick(self.tileObects);
         }
+    }
+
+    if (object instanceof Enemy){
+        this.enemies.push(object);
     }
 
     if (object) {

@@ -12,7 +12,7 @@ var gridCreator = (function () {
             }
             outerList.push(innerList);
         }
-        console.log('base grid', outerList);
+       // console.log('base grid', outerList);
         return outerList;
     }
 
@@ -153,6 +153,9 @@ var gridCreator = (function () {
             var rooms = [];
 
             generateRooms(sizeX, sizeY, grid, rooms);
+
+            enemyGenerator.placeEnemies(rooms, grid);
+
             resolve({ grid: grid, rooms: rooms });
         });
     }

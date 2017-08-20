@@ -37,11 +37,11 @@ Game.prototype.levelLoaded = function (room) {
 
     this.add(this.lightLayer);
 
-    this.player = new Player((room.x + room.w / 2)*this.level.tileSize , (room.y + room.h / 2)*this.level.tileSize);
+    this.player = new Player((room.x + room.w / 2) * this.level.tileSize, (room.y + room.h / 2) * this.level.tileSize);
 
     this.add(this.player);
 
-    this.effectsLayer = new EffectsLayer(this.level.tilesX * this.level.tilesY / 10, this.camera, this.level)
+    this.effectsLayer = new EffectsLayer(this.level.tilesX * this.level.tilesY / 10, this.camera, this.level);
 
     this.add(this.effectsLayer);
 
@@ -55,7 +55,7 @@ Game.prototype.showGameOver = function () {
 };
 
 Game.prototype.mouseUp = function (x, y) {
-    if(this.gameOver) {
+    if (this.gameOver) {
         game.goto("game");
         this.gameOver = false;
     }
@@ -64,12 +64,11 @@ Game.prototype.mouseUp = function (x, y) {
     }
 }
 
-Game.prototype.mouseMove = function(x,y) {
+Game.prototype.mouseMove = function (x, y) {
 }
 
 
-Game.prototype.keyDown = function (key)
-{
+Game.prototype.keyDown = function (key) {
     if (!this.player)
         return;
 
@@ -83,14 +82,13 @@ Game.prototype.keyDown = function (key)
         this.player.moveVertically(1);
 };
 
-Game.prototype.keyUp = function (key)
-{
+Game.prototype.keyUp = function (key) {
     if (!this.player)
         return;
 
     if (key == 37 || key == 39) {
         this.player.stopHorizontal();
-    } else if(key == 38 || key == 40) {
+    } else if (key == 38 || key == 40) {
         this.player.stopVertical();
     }
 
@@ -105,9 +103,9 @@ Game.prototype.update = function (deltaSeconds) {
 
     this.level.update(deltaSeconds);
 
-    this.lightLayer.setLightSource(this.player.x + this.player.width/2, this.player.y + this.player.height/2);
+    this.lightLayer.setLightSource(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2);
 
-    this.camera.setPosition(this.player.x + this.player.width/2, this.player.y + this.player.height/2);
+    this.camera.setPosition(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2);
 
     State.prototype.update.call(this, deltaSeconds);
 
