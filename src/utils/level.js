@@ -25,14 +25,7 @@ function Level(resources) {
 
     this.resources = resources;
 
-    //determine if read level from file or generated
-    this.generated = true;
-
     this.tileCreator = new TileCreator();
-
-    this.onCompleteCallback = null;
-    this.onCompleteCtx = null;
-    // this.loadLevel(number);
 
     game.audio.add('win', 1, [[0, , 0.52, 0.39, 0.27, 0.35, , 0.12, , 0.14, 0.56, 0.2085, 0.673, , , , , , 1, , , , , 0.3]]);
 
@@ -42,18 +35,15 @@ function Level(resources) {
 inherit(Level, Object);
 
 Level.prototype.load = function (number, onCompleteCallback, ctx) {
-    this.onCompleteCallback = onCompleteCallback;
-    this.onCompleteCtx = ctx;
-    if(this.generated){
-        var that = this;
-        gridCreator.create().then(function(result){
-            that.levelLoaded(result);
-            console.log('gridcreator', result);
-        });
-    } else {
-        console.log('level else');
-        this.loadLevel(number);
-    }
+    var that = this;
+    gridCreator.create().then(function(result){
+        that.levelLoaded(result.grid);
+
+        var roomIndex = mathHelper.getRandomNumber(0,result.rooms.length);
+
+        onCompleteCallback.call(ctx, result.rooms[roomIndex]);
+    });
+
 }
 
 Level.prototype.levelLoaded = function (data) {
@@ -61,28 +51,7 @@ Level.prototype.levelLoaded = function (data) {
     goalHelper.setGoalsInArray(this.tiles);
     this.processLevel();
 
-   console.log(this.tiles);
 }
-
-Level.prototype.processFileData = function (data) {
-    var templist = [];
-    var mainlist = [];
-    var i;
-    templist = data.split("\n");
-    for (i = 0; i < templist.length; i++) {
-        mainlist.push(templist[i].trim().split(""));
-    }
-    this.levelLoaded(mainlist);
-}
-
-
-Level.prototype.loadLevel = function (number) {
-    if (number > game.levels.length)
-        number = 1;
-
-    var level = game.levels[number - 1];
-    this.processFileData(level);
-};
 
 Level.prototype.processLevel = function () {
     this.tilesX = this.tiles[0].length + 2;
@@ -124,8 +93,6 @@ Level.prototype.processLevel = function () {
         var size = Math.random() * 10;
         this.bgTexture.context.fillRect(x, y, size, size);
     }
-
-    this.onCompleteCallback.call(this.onCompleteCtx, this.renderList);
 };
 
 Level.prototype.addTile = function (char, x, y) {
