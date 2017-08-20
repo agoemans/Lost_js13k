@@ -123,6 +123,10 @@ Level.prototype.addTile = function (char, x, y) {
         type: char, x: pX, y: pY, row: x, col: y, resources: this.resources
     });
 
+    if (object instanceof Enemy){
+        this.enemies.push(object);
+    }
+
     if (object) {
         this.renderList.push(object);
 
