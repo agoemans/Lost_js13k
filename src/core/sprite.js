@@ -9,7 +9,6 @@ function Sprite(x, y, image, frameCount, animCount) {
     this.animating = false;
     this.animation = 0;
     this.loop = false;
-    this.tint = null;
 
     this.visible = true;
 

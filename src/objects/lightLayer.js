@@ -91,7 +91,7 @@ LightLayer.prototype.render = function(context) {
     var tilesInRange = [];
 
     this.level.renderList.forEach(function (obj) {
-        if((obj instanceof BrickSprite || obj instanceof OuterWallSprite) && obj.visible){
+        if(obj.visible){
 
             var points = obj.getPoints();
 

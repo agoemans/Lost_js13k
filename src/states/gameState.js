@@ -39,6 +39,8 @@ Game.prototype.levelLoaded = function (room) {
 
     this.player = new Player((room.x + room.w / 2)*this.level.tileSize , (room.y + room.h / 2)*this.level.tileSize);
 
+    console.log(room);
+
     this.add(this.player);
 
     this.effectsLayer = new EffectsLayer(this.level.tilesX * this.level.tilesY / 10, this.camera, this.level)
@@ -125,6 +127,15 @@ Game.prototype.render = function (context) {
     this.camera.setHud(context);
 
     this.hud.render(context);
+
+    if(this.level.miniMapTexture)
+    {
+        this.level.miniMapTexture.render(context);
+
+        context.fillStyle = "#ff00ff";
+
+        context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.player.x / this.level.tileSize, this.level.miniMapTexture.y + this.level.miniMapScale * this.player.y / this.level.tileSize, this.level.miniMapScale, this.level.miniMapScale);
+    }
 
     this.camera.setWorld(context);
 };
