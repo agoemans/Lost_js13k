@@ -7,18 +7,7 @@ var gridCreator = (function () {
         for (var x = 0; x < outerArr; x++) {
             var innerList = [];
             for (var y = 0; y < innerArr; y++) {
-                var yValue = 0;
-                // var randomX = mathHelper.getRandomNumber(12) | 2;
-                // var randomY = mathHelper.getRandomNumber(12) | 2;
-                // console.log(randomX, randomY);
-                // if (randomY % 2 == 0 && randomX % 2 == 0 && index != limit) {
-                //     //create b or mines at random points
-                //     yValue = 'b';
-                //     index++;
-                // }
-
-                innerList.push(yValue);
-
+                innerList.push('Y');
             }
             outerList.push(innerList);
         }
@@ -26,216 +15,151 @@ var gridCreator = (function () {
         return outerList;
     }
 
-    // function divideByTwoWalls(row, col, arr){
-    //     console.log('row, col', row, col);
-    //     return new Promise(function(resolve, reject){
-    //         for (var r = 0; r < arr.length; r++){
-    //             for (var c = 0; c < arr.length; c++){
-    //                 if(c == col){
-    //                     arr[r][c] = 'Y';
-    //                 }
-    //                 if(r == row){
-    //                     console.log('this is the row', r, c, row);
-    //                     arr[r][c] = 'Y';
-    //                 }
-    //             }
-    //
-    //         }
-    //         resolve(arr);
-    //         reject('Could not divide by two walls');
-    //     })
-    // }
+    function generateRooms(sizeX, sizeY, map, rooms)
+    {
+        var room_count = mathHelper.getRandomNumber(50, 100);
+        var min_size = 5;
+        var max_size = 10;
 
-    function divideByTwoWalls(calculatedList, arr) {
-        return new Promise(function (resolve, reject) {
-            for (var x = 0; x < calculatedList.length; x++) {
-                var item = calculatedList[x];
-                console.log('arr[item.r][item.c]', arr[item.r][item.c]);
+        for (var i = 0; i < room_count; i++) {
+            var room = {};
 
-                // arr[item.r][item.c] ='Y';
+            room.x = mathHelper.getRandomNumber(1, sizeX - max_size - 1);
+            room.y = mathHelper.getRandomNumber(1, sizeY - max_size - 1);
+            room.w = mathHelper.getRandomNumber(min_size, max_size);
+            room.h = mathHelper.getRandomNumber(min_size, max_size);
 
-                for (var r = 0; r < arr.length; r++) {
-                    for (var c = 0; c < arr.length; c++) {
-                        if (c == item.c) {
-                            arr[r][c] = 'Y';
-                        }
-                        if (r == item.r) {
-                            // console.log('this is the row', r, c);
-                            arr[r][c] = 'Y';
-                        }
-                    }
+            if (doesCollide(room, -1, rooms)) {
+                i--;
+                continue;
+            }
+            room.w--;
+            room.h--;
 
+            rooms.push(room);
+        }
+
+        //squashRooms(rooms);
+
+        for (i = 0; i < room_count; i++) {
+            var roomA = rooms[i];
+            var roomB = findClosestRoom(roomA, rooms);
+            pointA = {
+                x: mathHelper.getRandomNumber(roomA.x, roomA.x + roomA.w),
+                y: mathHelper.getRandomNumber(roomA.y, roomA.y + roomA.h)
+            };
+            pointB = {
+                x: mathHelper.getRandomNumber(roomB.x, roomB.x + roomB.w),
+                y: mathHelper.getRandomNumber(roomB.y, roomB.y + roomB.h)
+            };
+            while ((pointB.x != pointA.x) || (pointB.y != pointA.y)) {
+                if (pointB.x != pointA.x) {
+                    if (pointB.x > pointA.x) pointB.x--;
+                    else pointB.x++;
+                }
+                else if (pointB.y != pointA.y) {
+                    if (pointB.y > pointA.y) pointB.y--;
+                    else pointB.y++;
                 }
 
+                map[pointB.x][pointB.y] = '_';
             }
-            resolve(arr);
-            reject('Could not divide by two walls');
-        })
-    }
+        }
 
-    function addVWall(minY, maxY, x, grid) {
-        var hole = mathHelper.getRandomNumber(minY, maxY);
-        console.log('VWall', minY, maxY, x, 'hole = ', hole);
-
-        for (var i = minY; i <= maxY; i++) {
-            if (i == hole) {
-                grid[i][x] = 'H';
-                console.log('canChange _', x, i, checkAllSides(i, x, '_', grid));
+        for (i = 0; i < room_count; i++) {
+            var room = rooms[i];
+            for (var x = room.x; x < room.x + room.w; x++) {
+                for (var y = room.y; y < room.y + room.h; y++) {
+                    map[x][y] = '_';
+                }
             }
-            else {
-                grid[i][x] = "W";
-                console.log('canChange W', x, i, checkAllSides(i, x, 'W', grid));
+        }
+
+        for (var x = 0; x < sizeX; x++) {
+            for (var y = 0; y < sizeY; y++) {
+                if (map[x][y] == '_') {
+                    for (var xx = x - 1; xx <= x + 1; xx++) {
+                        for (var yy = y - 1; yy <= y + 1; yy++) {
+                            if (map[xx][yy] == 'Y') map[xx][yy] = 'W';
+                        }
+                    }
+                }
             }
         }
     }
 
-    function addHWall(minX, maxX, y, grid) {
-        var hole = mathHelper.getRandomNumber(minX, maxX);
-        console.log('HWall', minX, maxX, y, 'hole = ', hole);
-
-        for (var i = minX; i <= maxX; i++) {
-            if (i == hole) {
-                grid[y][i] = 'H';
-                console.log('canChange _', y, i, checkAllSides(y, i, '_', grid));
+    function findClosestRoom(room, rooms) {
+        var mid = {
+            x: room.x + (room.w / 2),
+            y: room.y + (room.h / 2)
+        };
+        var closest = null;
+        var closest_distance = 1000;
+        for (var i = 0; i < rooms.length; i++) {
+            var check = rooms[i];
+            if (check == room) continue;
+            var check_mid = {
+                x: check.x + (check.w / 2),
+                y: check.y + (check.h / 2)
+            };
+            var distance = Math.min(Math.abs(mid.x - check_mid.x) - (room.w / 2) - (check.w / 2), Math.abs(mid.y - check_mid.y) - (room.h / 2) - (check.h / 2));
+            if (distance < closest_distance) {
+                closest_distance = distance;
+                closest = check;
             }
-            else {
-                grid[y][i] = "W";
-                console.log('canChange W', y, i, checkAllSides(y, i, 'W', grid));
+        }
+        return closest;
+    }
 
+    function squashRooms (rooms) {
+        for (var i = 0; i < 10; i++) {
+            for (var j = 0; j < rooms.length; j++) {
+                var room = rooms[j];
+                while (true) {
+                    var old_position = {
+                        x: room.x,
+                        y: room.y
+                    };
+                    if (room.x > 1) room.x--;
+                    if (room.y > 1) room.y--;
+                    if ((room.x == 1) && (room.y == 1)) break;
+                    if (doesCollide(room, j, rooms)) {
+                        room.x = old_position.x;
+                        room.y = old_position.y;
+                        break;
+                    }
+                }
             }
         }
     }
 
-    function checkNeighborCell(col, row, marker, grid) {
-        marker = 'H';
-        if(col == -1 || row == -1 || grid[col] == undefined || grid[col][row] == undefined) { return false; }
-        if(grid[col][row] !== -1 && grid[col][row] !== marker){
-            return true;
+    function doesCollide (room, ignore, rooms) {
+        for (var i = 0; i < rooms.length; i++) {
+            if (i == ignore) continue;
+            var check = rooms[i];
+            if (!((room.x + room.w < check.x) || (room.x > check.x + check.w) || (room.y + room.h < check.y) || (room.y > check.y + check.h))) return true;
         }
+
         return false;
     }
 
-    function checkAllSides(col, row, marker, grid) {
-        var canChange = false;
-
-        canChange = checkNeighborCell(col - 1, row, marker, grid);
-        canChange = checkNeighborCell(col, row - 1, marker, grid);
-        canChange = checkNeighborCell(col, row + 1, marker, grid);
-        canChange = checkNeighborCell(col + 1, row + 1, marker, grid);
-
-        return canChange;
-
-    }
-
-    function subDivideArea(horizontal, minR, minC, maxR, maxC, grid) {
-        var myHoriz = !horizontal;
-        var x, y;
-
-        if ((maxR - minR) > 3 && horizontal) {
-            // y = mathHelper.getRandomNumber(minR + 1, maxR - 1);
-            y = getRow(minR + 1, maxR - 1, grid);
-            addHWall(minC, maxC, y, grid);
-
-            //draw col
-            subDivideArea(myHoriz, minR, minC, y-1, maxC, grid);
-
-            //draw row
-            subDivideArea(myHoriz, y+1, minC, maxR, maxC, grid);
-        }
-
-        if ((maxC - minC) > 3 && !horizontal) {
-            // x = mathHelper.getRandomNumber(minC + 1, maxC - 1);
-            x = getCol(minC + 1, maxC - 1, grid);
-            addVWall(minR, maxR, x, grid);
-
-            subDivideArea(myHoriz, minR, minC, maxR, x-1, grid);
-
-            subDivideArea(myHoriz, minR, x+1, maxR, maxC, grid);
-        }
-
-    }
-
-    function getRow(min, max, grid){
-        var y = mathHelper.getRandomNumber(min, max);
-        var minEnd = grid[y][min - 1];
-        var maxEnd = grid[y][max + 1];
-        console.log('minEnd, maxend', minEnd, maxEnd);
-        while(minEnd == 'X' || maxEnd == 'X'){
-            y = mathHelper.getRandomNumber(min, max);
-            minEnd = grid[y][min - 1];
-            maxEnd = grid[y][max + 1];
-            // console.log('looping min max adn x', minEnd, maxEnd, x);
-            // if(minEnd != 'X' && maxEnd != 'X'){
-            //     break;
-            // } else {
-            //     y = mathHelper.getRandomNumber(min, max);
-            //     minEnd = grid[y][min - 1];
-            //     maxEnd = grid[y][max + 1];
-            //     console.log('looping min max adn x', minEnd, maxEnd, x);
-            // }
-        }
-        return y;
-    }
-
-    function getCol(min, max, grid){
-        var x = mathHelper.getRandomNumber(min, max);
-        var minEnd = grid[min - 1][x];
-        var maxEnd = grid[max + 1][x];
-        console.log('minEnd, maxend', minEnd, maxEnd);
-        while(minEnd == 'X' || maxEnd == 'X'){
-            x = mathHelper.getRandomNumber(min, max);
-            minEnd = grid[min - 1][x];
-            maxEnd = grid[max + 1][x];
-            //console.log('looping min max and x', minEnd, maxEnd, x);
-            // if(minEnd != 'X' && maxEnd != 'X'){
-            //     break;
-            // } else {
-            //     x = mathHelper.getRandomNumber(min, max);
-            //     minEnd = grid[min - 1][x];
-            //     maxEnd = grid[max + 1][x];
-            //     console.log('looping min max and x', minEnd, maxEnd, x);
-            // }
-        }
-        return x;
-    }
-
-    function getBaseGrid(outerArr, innerArr) {
-        return new Promise(function (resolve, reject) {
-            var emptyBaseGrid = createBaseGrid(outerArr, innerArr);
-            resolve(emptyBaseGrid);
-            reject('Could not create base grid');
-        })
-    }
-
-    function calculateGridWalls(arr) {
-        return new Promise(function (resolve, reject) {
-
-            subDivideArea(true, 0, 0, arr.length - 1, arr.length - 1, arr);
-            //addInnerWall(true, 0, arr.length - 1, 0, arr.length - 1, 0, arr);
-
-            resolve(arr);
-            reject('Could not create base grid');
-        })
-    }
-
-    function createFullMazeGrid(outerArr, innerArr) {
+    function createGrid(sizeX, sizeY) {
         //too refactor this to helper
         return new Promise(function (resolve, reject) {
-            getBaseGrid(outerArr, innerArr).then(function (baseGrid) {
-                calculateGridWalls(baseGrid).then(function (calculatedGrid) {
-                    console.log('calculateGridWalls')
-                    resolve(calculatedGrid);
-                    reject('Could not create FullMazeGrid');
-                });
 
-            });
+            var grid = createBaseGrid(sizeX, sizeY);
+
+            var rooms = [];
+
+            generateRooms(sizeX, sizeY, grid, rooms);
+            resolve(grid);
         });
     }
 
     return {
         grid: [],
         create: function () {
-            return createFullMazeGrid(100, 100);
+            return createGrid(100, 100);
 
         }
     }

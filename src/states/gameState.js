@@ -37,7 +37,7 @@ Game.prototype.levelLoaded = function (renderList) {
 
     this.add(this.lightLayer);
 
-    this.player = new Player(100,100);
+    this.player = new Player(150,150);
 
     this.add(this.player);
 
