@@ -125,8 +125,6 @@ Level.prototype.processLevel = function () {
         this.bgTexture.context.fillRect(x, y, size, size);
     }
 
-    console.log('this.tileObects', this.tileObects);
-
     this.onCompleteCallback.call(this.onCompleteCtx, this.renderList);
 };
 
