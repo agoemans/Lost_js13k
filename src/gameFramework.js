@@ -70,20 +70,24 @@ function update() {
     game.updateGame(deltaSeconds);
     game.renderGame(localContext);
 
-    if (drawFps) {
-        localContext.fillStyle = "#000";
-        localContext.fillRect(0, 0, 60, 15);
-        localContext.fillStyle = "#fff";
-        var fps = Math.floor(1 / deltaSeconds);
-
-        localContext.font = "10px Roboto";
-        localContext.fillText("FPS: " + fps, 10, 10);
-    }
-
     localContext.restore();
 
     context.setTransform(game.scale, 0, 0, game.scale, 0, 0);
     context.drawImage(localCanvas, 0, 0, canvasWidth, canvasHeight);
+
+
+
+    if (drawFps) {
+        context.fillStyle = "#000";
+        context.fillRect(0, 0, 60, 15);
+        context.fillStyle = "#fff";
+        var fps = Math.floor(1 / deltaSeconds);
+
+        context.font = "10px Roboto";
+        context.fillText("FPS: " + fps, 10, 10);
+    }
+
+
     requestAnimationFrame(update);
 
     then = now;

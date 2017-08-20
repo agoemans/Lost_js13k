@@ -12,8 +12,11 @@ function Game() {
 inherit(Game, State);
 
 Game.prototype.enter = function (config) {
+
     this.clear();
-    game.canvas.style.backgroundColor = "#111";
+
+    game.canvas.style.backgroundColor = "#000000";
+
     State.prototype.enter.call(this, context);
 
     this.cameraOffset = 0;
@@ -29,14 +32,9 @@ Game.prototype.enter = function (config) {
 };
 
 Game.prototype.levelLoaded = function (renderList) {
-    for(var i = 0; i < renderList.length; i++){
-        if(renderList[i] instanceof BrickSprite){
-            this.add(renderList[i]);
-        }
-    }
 
     this.lightLayer = new LightLayer(this.level);
-    
+
     this.add(this.lightLayer);
 
     this.player = new Player(100,100);
@@ -95,7 +93,7 @@ Game.prototype.keyUp = function (key)
     } else if(key == 38 || key == 40) {
         this.player.stopVertical();
     }
-        
+
 };
 
 
@@ -123,7 +121,7 @@ Game.prototype.render = function (context) {
     this.level.render(context);
 
     State.prototype.render.call(this, context);
-    
+
     this.camera.setHud(context);
 
     this.hud.render(context);

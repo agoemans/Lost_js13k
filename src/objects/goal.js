@@ -1,5 +1,5 @@
 function Goal(config) {
-    Sprite.call(this, config.x, config.y, 'assets/wall2.png');
+    Sprite.call(this, config.x, config.y, 'assets/goal.jpg');
     this.goalResource = config.resources.get('goals');
     this.onGoalReached = null;
     this.baseY = config.y;
@@ -11,7 +11,7 @@ Goal.prototype.collide = function (other) {
     this.collides = false;
     // this.destroy();
     this.goalResource.add(1);
-    this.image.src = 'assets/wall.png';
+    this.image.src = 'assets/underWall.jpg';
     if (this.onGoalReached) this.onGoalReached(this.x + this.width / 2, this.y + this.height / 2);
 };
 

@@ -8,7 +8,7 @@ function LightLayer(level) {
     this.gradient = null;
 
     this.iterations = 10;
-    
+
     this.sizeVar = 30;
 
     this.minSize = 50;
@@ -21,13 +21,9 @@ function LightLayer(level) {
 
     this.height = game.height;
 
-    this.lightCanvas = document.createElement('canvas');
-    
-    this.lightCanvas.width = game.width;
-    
-    this.lightCanvas.height = game.height;
+    this.pointLightTexture = null;
 
-    this.lightContext = this.lightCanvas.getContext('2d');
+    this.lightTexture = new RenderTexture(0,0,game.width,game.height);
 
     this.ambientLight = '#15171f';
 
@@ -39,54 +35,63 @@ inherit(LightLayer, GameObject);
 ctor(LightLayer);
 
 LightLayer.prototype.setLightSource = function(x,y) {
-    
+
     this.lightingPos.x = x;
 
     this.lightingPos.y = y;
-    
+
     this.x = this.lightingPos.x - this.width/2;
 
     this.y = this.lightingPos.y - this.height/2;
+
+    this.lightTexture.x = this.x;
+
+    this.lightTexture.y = this.y;
 }
 
-LightLayer.prototype.renderLightRadius = function(context) {
+LightLayer.prototype.renderLightRadius = function() {
 
-   this.lightContext.fillStyle = this.lightColor;
+    this.pointLightTexture = new RenderTexture(this.width/2 - this.attenuation,this.height/2 - this.attenuation,this.attenuation*2,this.attenuation*2);
 
-    this.lightContext.beginPath()
+    this.pointLightTexture.context.fillStyle = this.lightColor;
+
+    this.pointLightTexture.context.beginPath()
 
     for(var i=0;i<=this.iterations;i++)
     {
-        this.lightContext.globalAlpha = this.minAlpha + (1-this.minAlpha) * 1/(i+1) * 1/(i+1);
+        this.pointLightTexture.context.globalAlpha = this.minAlpha + (1-this.minAlpha) * 1/(i+1) * 1/(i+1);
 
         var size = this.minSize + this.sizeVar * i;
 
-        this.lightContext.arc(this.width/2, this.height/2, size, 0, Math.PI * 2)
+        this.pointLightTexture.context.arc(this.attenuation, this.attenuation, size, 0, Math.PI * 2)
 
-        this.lightContext.fill();
+        this.pointLightTexture.context.fill();
     }
 
-    this.lightContext.closePath();
+    this.pointLightTexture.context.closePath();
  }
 
 LightLayer.prototype.render = function(context) {
 
-    this.lightContext.fillStyle = this.ambientLight;
+    this.lightTexture.context.fillStyle = this.ambientLight;
 
-    this.lightContext.globalAlpha = 1;
+    this.lightTexture.context.globalAlpha = 1;
 
-    this.lightContext.clearRect(0, 0, this.width, this.height);
+    this.lightTexture.context.fillRect(0, 0, this.width, this.height);
 
-    this.lightContext.fillRect(0, 0, this.width, this.height);
+    if(this.pointLightTexture === null)
+    {
+        this.renderLightRadius();
+    }
 
-    this.renderLightRadius(this.lightContext);
+    this.pointLightTexture.render(this.lightTexture.context);
 
-    this.lightContext.setTransform(1, 0, 0, 1, -this.x, -this.y);
+    this.lightTexture.context.setTransform(1, 0, 0, 1, -this.x, -this.y);
 
     var tilesInRange = [];
 
     this.level.renderList.forEach(function (obj) {
-        if(obj instanceof BrickSprite && obj.visible){
+        if((obj instanceof BrickSprite || obj instanceof OuterWallSprite) && obj.visible){
 
             var points = obj.getPoints();
 
@@ -94,17 +99,17 @@ LightLayer.prototype.render = function(context) {
 
             var distanceSqr = mathHelper.distanceSqr(closest.x, closest.y, this.lightingPos.x, this.lightingPos.y);
 
-            this.lightContext.fillStyle = this.ambientLight;
+            this.lightTexture.context.fillStyle = this.ambientLight;
 
-            this.lightContext.globalAlpha = 1;
-            
+            this.lightTexture.context.globalAlpha = 1;
+
             if(distanceSqr > this.attenuation*this.attenuation)
             {
                 return;
             }
 
             points.remove(closest);
-            
+
             var furthest = this.getFurthestPoint(points, this.lightingPos);
 
             points.remove(furthest);
@@ -113,40 +118,20 @@ LightLayer.prototype.render = function(context) {
             {
                 return
             }
-            
-            this.lightContext.beginPath();
-            
+
+            this.lightTexture.context.beginPath();
+
             var distance = 500;
 
-            this.lightContext.fillStyle = this.ambientLight;
-            
-            this.lightContext.globalAlpha = 1;
+            this.lightTexture.context.fillStyle = this.ambientLight;
 
-            this.lightContext.moveTo(closest.x ,closest.y);
+            this.lightTexture.context.globalAlpha = 1;
 
-            this.lightContext.lineTo(points[0].x, points[0].y);
+            this.drawSegment(this.lightTexture.context, closest.x, closest.y, points[0].x, points[0].y);
 
-            this.lightContext.lineTo(points[0].x + (points[0].x - this.lightingPos.x)*distance, points[0].y + (points[0].y - this.lightingPos.y)*distance);
+            this.drawSegment(this.lightTexture.context, closest.x, closest.y, points[1].x, points[1].y);
 
-            this.lightContext.lineTo(closest.x + (closest.x - this.lightingPos.x)*distance, closest.y + (closest.y - this.lightingPos.y)*distance);
-
-            this.lightContext.lineTo(closest.x, closest.y)
-
-            this.lightContext.fill();
-
-            this.lightContext.moveTo(closest.x ,closest.y);
-
-            this.lightContext.lineTo(points[1].x, points[1].y);
-
-            this.lightContext.lineTo(points[1].x + (points[1].x - this.lightingPos.x)*distance, points[1].y + (points[1].y - this.lightingPos.y)*distance);
-
-            this.lightContext.lineTo(closest.x + (closest.x - this.lightingPos.x)*distance, closest.y + (closest.y - this.lightingPos.y)*distance);
-
-            this.lightContext.lineTo(closest.x, closest.y);
-            
-            this.lightContext.fill();
-
-            this.lightContext.closePath();
+            this.lightTexture.context.closePath();
 
             tilesInRange.push({ obj: obj, alpha: 1 - distanceSqr/(this.attenuation*this.attenuation) } );
         }
@@ -154,16 +139,16 @@ LightLayer.prototype.render = function(context) {
     }.bind(this));
 
     tilesInRange.forEach(function(tile) {
-        this.lightContext.fillStyle = this.lightColor;
-        
-        this.lightContext.globalAlpha = tile.alpha/2;
+        this.lightTexture.context.fillStyle = this.lightColor;
 
-        this.lightContext.fillRect(tile.obj.x, tile.obj.y, tile.obj.width, tile.obj.height);
+        this.lightTexture.context.globalAlpha = tile.alpha/2;
+
+        this.lightTexture.context.fillRect(tile.obj.x, tile.obj.y, tile.obj.width, tile.obj.height);
     }.bind(this));
 
-    this.lightContext.fillStyle = this.ambientLight;
+    this.lightTexture.context.fillStyle = this.ambientLight;
 
-    this.lightContext.setTransform(1, 0, 0, 1, 1, 1);
+    this.lightTexture.context.setTransform(1, 0, 0, 1, 1, 1);
 
     var oldBlendingMode = context.globalCompositeOperation;
 
@@ -171,9 +156,25 @@ LightLayer.prototype.render = function(context) {
 
     context.globalCompositeOperation = 'multiply';
 
-    context.drawImage(this.lightCanvas, this.x, this.y, this.lightCanvas.width, this.lightCanvas.height);
+    this.lightTexture.render(context);
 
     context.globalCompositeOperation = oldBlendingMode;
+}
+
+LightLayer.prototype.drawSegment = function(context, x1, y1, x2, y2) {
+    var distance = 500;
+
+    context.moveTo(x1, y1);
+
+    context.lineTo(x2, y2);
+
+    context.lineTo(x2 + (x2 - this.lightingPos.x)*distance, y2 + (y2 - this.lightingPos.y)*distance);
+
+    context.lineTo(x1 + (x1 - this.lightingPos.x)*distance, y1 + (y1 - this.lightingPos.y)*distance);
+
+    context.lineTo(x1, y1);
+
+    context.fill();
 }
 
 LightLayer.prototype.getClosestPoint = function(points, source)
@@ -190,7 +191,7 @@ LightLayer.prototype.getClosestPoint = function(points, source)
             dist = distanceSqr;
         }
 
-    });    
+    });
 
     return closest;
 }
@@ -210,7 +211,7 @@ LightLayer.prototype.getFurthestPoint = function(points, source)
         }
 
     });
-    
+
     return furthest;
 }
 

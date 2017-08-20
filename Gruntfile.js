@@ -104,7 +104,7 @@ module.exports = function(grunt) {
 			prod: {
                 files: [
 					{expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/prod/assets'},
-					{expand: true, flatten: true, src: ['assets/*.jpg'], dest: 'build/dev/assets'},
+					{expand: true, flatten: true, src: ['assets/*.jpg'], dest: 'build/prod/assets'},
                     {expand: true, flatten: true, src: ['assets/level1.txt'], dest: 'build/prod/assets', filter: 'isFile'},
                     //{expand: true, flatten: true, src: ['build/compiled.js'], dest: 'build/prod/src', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/prod', filter: 'isFile'}
@@ -124,7 +124,7 @@ module.exports = function(grunt) {
 				'build/compiled.js' : ['src/**/*.js']
 				},
 				options: {
-					
+
 					compilation_level: 'SIMPLE',
 					dependency_mode: 'LOOSE',
 					language_in: 'ECMASCRIPT5_STRICT'
@@ -136,7 +136,7 @@ module.exports = function(grunt) {
 				'build/prod/src/compiled.js' : ['build/compiled.js']
 				},
 				options: {
-					
+
 					compilation_level: 'SIMPLE',
 					language_in: 'ECMASCRIPT5_STRICT'
 				}

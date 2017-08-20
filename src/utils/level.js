@@ -18,6 +18,8 @@ function Level(resources) {
 
     this.tileObects = [];
 
+    this.bgTexture = null;
+
     this.bgLayer = [];
     this.renderList = [];
 
@@ -103,16 +105,25 @@ Level.prototype.processLevel = function () {
             this.addTile(tile, newX, newY);
         }
     }
-    
+
     this.width = this.tilesX * this.tileSize;
+
     this.height = this.tilesY * this.tileSize;
 
-    for (var i = 0; i < this.tilesX * this.tilesY; i++)
-        this.bgLayer.push({
-            x: Math.random() * (this.tilesX * this.tileSize - 40) + 20,
-            y: Math.random() * (this.tilesY * this.tileSize - 40) + 20,
-            size: Math.random() * 10
-        });
+    this.bgTexture = new RenderTexture(0,0,this.width,this.height);
+
+    this.bgTexture.context.fillStyle = "#333333";
+
+    this.bgTexture.context.fillRect(0, 0, this.tilesX * this.tileSize, this.tilesY * this.tileSize);
+
+    this.bgTexture.context.fillStyle = "#5a5a5a";
+
+    for (var i = 0; i < this.tilesX * this.tilesY; i++) {
+        var x = Math.random() * (this.tilesX * this.tileSize - 40) + 20;
+        var y = Math.random() * (this.tilesY * this.tileSize - 40) + 20;
+        var size = Math.random() * 10;
+        this.bgTexture.context.fillRect(x, y, size, size);
+    }
 
     console.log('this.tileObects', this.tileObects);
 
@@ -242,12 +253,10 @@ Level.prototype.update = function (deltaSeconds) {
 };
 
 Level.prototype.render = function (context) {
-    context.fillStyle = "#333333";
-    context.fillRect(0, 0, this.tilesX * this.tileSize, this.tilesY * this.tileSize);
-    context.fillStyle = "#5a5a5a";
-    this.bgLayer.forEach(function (obj) {
-        context.fillRect(obj.x, obj.y, obj.size, obj.size);
-    });
+
+    context.fillStyle = "#ffffff";
+
+    this.bgTexture.render(context);
 
     this.renderList.forEach(function (obj) {
         obj.render(context);

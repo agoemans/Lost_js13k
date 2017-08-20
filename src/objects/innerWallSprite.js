@@ -1,5 +1,5 @@
 function InnerWallSprite(x, y) {
-    Sprite.call(this, x, y, "assets/wall2.png");
+    Sprite.call(this, x, y, "assets/underWall.jpg");
 };
 
 inherit(InnerWallSprite, Sprite);
