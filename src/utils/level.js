@@ -91,8 +91,6 @@ Level.prototype.processLevel = function () {
         var size = Math.random() * 10;
         this.bgTexture.context.fillRect(x, y, size, size);
     }
-
-    console.log('this.tileObects', this.tileObects);
 };
 
 Level.prototype.addTile = function (char, x, y) {
