@@ -8,7 +8,7 @@ function LightLayer(level) {
     this.gradient = null;
 
     this.iterations = 10;
-    
+
     this.sizeVar = 30;
 
     this.minSize = 50;
@@ -21,10 +21,12 @@ function LightLayer(level) {
 
     this.height = game.height;
 
+    this.pointLightCanvas = null;
+
     this.lightCanvas = document.createElement('canvas');
-    
+
     this.lightCanvas.width = game.width;
-    
+
     this.lightCanvas.height = game.height;
 
     this.lightContext = this.lightCanvas.getContext('2d');
@@ -39,34 +41,42 @@ inherit(LightLayer, GameObject);
 ctor(LightLayer);
 
 LightLayer.prototype.setLightSource = function(x,y) {
-    
+
     this.lightingPos.x = x;
 
     this.lightingPos.y = y;
-    
+
     this.x = this.lightingPos.x - this.width/2;
 
     this.y = this.lightingPos.y - this.height/2;
 }
 
-LightLayer.prototype.renderLightRadius = function(context) {
+LightLayer.prototype.renderLightRadius = function() {
 
-   this.lightContext.fillStyle = this.lightColor;
+    this.pointLightCanvas = document.createElement('canvas');
 
-    this.lightContext.beginPath()
+    this.pointLightCanvas.width = this.attenuation*2;
+
+    this.pointLightCanvas.height = this.attenuation*2;
+
+    var pointLightContext = this.pointLightCanvas.getContext('2d');
+
+    pointLightContext.fillStyle = this.lightColor;
+
+    pointLightContext.beginPath()
 
     for(var i=0;i<=this.iterations;i++)
     {
-        this.lightContext.globalAlpha = this.minAlpha + (1-this.minAlpha) * 1/(i+1) * 1/(i+1);
+        pointLightContext.globalAlpha = this.minAlpha + (1-this.minAlpha) * 1/(i+1) * 1/(i+1);
 
         var size = this.minSize + this.sizeVar * i;
 
-        this.lightContext.arc(this.width/2, this.height/2, size, 0, Math.PI * 2)
+        pointLightContext.arc(this.attenuation, this.attenuation, size, 0, Math.PI * 2)
 
-        this.lightContext.fill();
+        pointLightContext.fill();
     }
 
-    this.lightContext.closePath();
+    pointLightContext.closePath();
  }
 
 LightLayer.prototype.render = function(context) {
@@ -79,14 +89,20 @@ LightLayer.prototype.render = function(context) {
 
     this.lightContext.fillRect(0, 0, this.width, this.height);
 
-    this.renderLightRadius(this.lightContext);
+    if(this.pointLightCanvas === null)
+    {
+        this.renderLightRadius();
+    }
+
+    this.lightContext.drawImage(this.pointLightCanvas, this.width/2 - this.attenuation, this.height/2 - this.attenuation, this.pointLightCanvas.width, this.pointLightCanvas.height);
+
 
     this.lightContext.setTransform(1, 0, 0, 1, -this.x, -this.y);
 
     var tilesInRange = [];
 
     this.level.renderList.forEach(function (obj) {
-        if(obj instanceof BrickSprite && obj.visible){
+        if((obj instanceof BrickSprite || obj instanceof OuterWallSprite) && obj.visible){
 
             var points = obj.getPoints();
 
@@ -97,14 +113,14 @@ LightLayer.prototype.render = function(context) {
             this.lightContext.fillStyle = this.ambientLight;
 
             this.lightContext.globalAlpha = 1;
-            
+
             if(distanceSqr > this.attenuation*this.attenuation)
             {
                 return;
             }
 
             points.remove(closest);
-            
+
             var furthest = this.getFurthestPoint(points, this.lightingPos);
 
             points.remove(furthest);
@@ -113,38 +129,18 @@ LightLayer.prototype.render = function(context) {
             {
                 return
             }
-            
+
             this.lightContext.beginPath();
-            
+
             var distance = 500;
 
             this.lightContext.fillStyle = this.ambientLight;
-            
+
             this.lightContext.globalAlpha = 1;
 
-            this.lightContext.moveTo(closest.x ,closest.y);
+            this.drawSegment(closest.x, closest.y, points[0].x, points[0].y);
 
-            this.lightContext.lineTo(points[0].x, points[0].y);
-
-            this.lightContext.lineTo(points[0].x + (points[0].x - this.lightingPos.x)*distance, points[0].y + (points[0].y - this.lightingPos.y)*distance);
-
-            this.lightContext.lineTo(closest.x + (closest.x - this.lightingPos.x)*distance, closest.y + (closest.y - this.lightingPos.y)*distance);
-
-            this.lightContext.lineTo(closest.x, closest.y)
-
-            this.lightContext.fill();
-
-            this.lightContext.moveTo(closest.x ,closest.y);
-
-            this.lightContext.lineTo(points[1].x, points[1].y);
-
-            this.lightContext.lineTo(points[1].x + (points[1].x - this.lightingPos.x)*distance, points[1].y + (points[1].y - this.lightingPos.y)*distance);
-
-            this.lightContext.lineTo(closest.x + (closest.x - this.lightingPos.x)*distance, closest.y + (closest.y - this.lightingPos.y)*distance);
-
-            this.lightContext.lineTo(closest.x, closest.y);
-            
-            this.lightContext.fill();
+            this.drawSegment(closest.x, closest.y, points[1].x, points[1].y);
 
             this.lightContext.closePath();
 
@@ -155,7 +151,7 @@ LightLayer.prototype.render = function(context) {
 
     tilesInRange.forEach(function(tile) {
         this.lightContext.fillStyle = this.lightColor;
-        
+
         this.lightContext.globalAlpha = tile.alpha/2;
 
         this.lightContext.fillRect(tile.obj.x, tile.obj.y, tile.obj.width, tile.obj.height);
@@ -176,6 +172,22 @@ LightLayer.prototype.render = function(context) {
     context.globalCompositeOperation = oldBlendingMode;
 }
 
+LightLayer.prototype.drawSegment = function(x1, y1, x2, y2) {
+    var distance = 500;
+
+    this.lightContext.moveTo(x1, y1);
+
+    this.lightContext.lineTo(x2, y2);
+
+    this.lightContext.lineTo(x2 + (x2 - this.lightingPos.x)*distance, y2 + (y2 - this.lightingPos.y)*distance);
+
+    this.lightContext.lineTo(x1 + (x1 - this.lightingPos.x)*distance, y1 + (y1 - this.lightingPos.y)*distance);
+
+    this.lightContext.lineTo(x1, y1);
+
+    this.lightContext.fill();
+}
+
 LightLayer.prototype.getClosestPoint = function(points, source)
 {
     var dist = Infinity;
@@ -190,7 +202,7 @@ LightLayer.prototype.getClosestPoint = function(points, source)
             dist = distanceSqr;
         }
 
-    });    
+    });
 
     return closest;
 }
@@ -210,7 +222,7 @@ LightLayer.prototype.getFurthestPoint = function(points, source)
         }
 
     });
-    
+
     return furthest;
 }
 
