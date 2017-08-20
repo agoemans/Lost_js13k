@@ -3,7 +3,7 @@ function BrickSprite(config) {
     this.hasBomb = (config.type === 'b');
     this.nearbyBombs = (config.type !== 'b' ? config.type: 1);
     this.altImgSrc = null;
-    this.image.src = (config.type === 'G' ? 'assets/bomb.png' : 'assets/wall2.jpg');
+    this.image.src = (config.type === 'G' ? 'assets/goal.jpg' : 'assets/wall2.jpg');
     this.isFlagged = false;
     this.canClick = false;
     this.tint = '2277aa';
@@ -31,12 +31,12 @@ BrickSprite.prototype.flag = function () {
 
 BrickSprite.prototype.setAltImg = function () {
     if(this.hasBomb){
-        this.altImgSrc = "assets/" + "bomb" + ".png";
+        this.altImgSrc = "assets/" + "goal" + ".jpg";
     } else {
         if(this.nearbyBombs === 0){
             this.altImgSrc = null;
         } else {
-            this.altImgSrc = "assets/tile" + this.nearbyBombs + ".png";
+            this.altImgSrc = "assets/tile" + this.nearbyBombs + ".jpg";
         }
     }
 
