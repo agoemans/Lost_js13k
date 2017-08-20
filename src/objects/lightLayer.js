@@ -21,15 +21,9 @@ function LightLayer(level) {
 
     this.height = game.height;
 
-    this.pointLightCanvas = null;
+    this.pointLightTexture = null;
 
-    this.lightCanvas = document.createElement('canvas');
-
-    this.lightCanvas.width = game.width;
-
-    this.lightCanvas.height = game.height;
-
-    this.lightContext = this.lightCanvas.getContext('2d');
+    this.lightTexture = new RenderTexture(0,0,game.width,game.height);
 
     this.ambientLight = '#15171f';
 
@@ -49,55 +43,50 @@ LightLayer.prototype.setLightSource = function(x,y) {
     this.x = this.lightingPos.x - this.width/2;
 
     this.y = this.lightingPos.y - this.height/2;
+
+    this.lightTexture.x = this.x;
+
+    this.lightTexture.y = this.y;
 }
 
 LightLayer.prototype.renderLightRadius = function() {
 
-    this.pointLightCanvas = document.createElement('canvas');
+    this.pointLightTexture = new RenderTexture(this.width/2 - this.attenuation,this.height/2 - this.attenuation,this.attenuation*2,this.attenuation*2);
 
-    this.pointLightCanvas.width = this.attenuation*2;
+    this.pointLightTexture.context.fillStyle = this.lightColor;
 
-    this.pointLightCanvas.height = this.attenuation*2;
-
-    var pointLightContext = this.pointLightCanvas.getContext('2d');
-
-    pointLightContext.fillStyle = this.lightColor;
-
-    pointLightContext.beginPath()
+    this.pointLightTexture.context.beginPath()
 
     for(var i=0;i<=this.iterations;i++)
     {
-        pointLightContext.globalAlpha = this.minAlpha + (1-this.minAlpha) * 1/(i+1) * 1/(i+1);
+        this.pointLightTexture.context.globalAlpha = this.minAlpha + (1-this.minAlpha) * 1/(i+1) * 1/(i+1);
 
         var size = this.minSize + this.sizeVar * i;
 
-        pointLightContext.arc(this.attenuation, this.attenuation, size, 0, Math.PI * 2)
+        this.pointLightTexture.context.arc(this.attenuation, this.attenuation, size, 0, Math.PI * 2)
 
-        pointLightContext.fill();
+        this.pointLightTexture.context.fill();
     }
 
-    pointLightContext.closePath();
+    this.pointLightTexture.context.closePath();
  }
 
 LightLayer.prototype.render = function(context) {
 
-    this.lightContext.fillStyle = this.ambientLight;
+    this.lightTexture.context.fillStyle = this.ambientLight;
 
-    this.lightContext.globalAlpha = 1;
+    this.lightTexture.context.globalAlpha = 1;
 
-    this.lightContext.clearRect(0, 0, this.width, this.height);
+    this.lightTexture.context.fillRect(0, 0, this.width, this.height);
 
-    this.lightContext.fillRect(0, 0, this.width, this.height);
-
-    if(this.pointLightCanvas === null)
+    if(this.pointLightTexture === null)
     {
         this.renderLightRadius();
     }
 
-    this.lightContext.drawImage(this.pointLightCanvas, this.width/2 - this.attenuation, this.height/2 - this.attenuation, this.pointLightCanvas.width, this.pointLightCanvas.height);
+    this.pointLightTexture.render(this.lightTexture.context);
 
-
-    this.lightContext.setTransform(1, 0, 0, 1, -this.x, -this.y);
+    this.lightTexture.context.setTransform(1, 0, 0, 1, -this.x, -this.y);
 
     var tilesInRange = [];
 
@@ -110,9 +99,9 @@ LightLayer.prototype.render = function(context) {
 
             var distanceSqr = mathHelper.distanceSqr(closest.x, closest.y, this.lightingPos.x, this.lightingPos.y);
 
-            this.lightContext.fillStyle = this.ambientLight;
+            this.lightTexture.context.fillStyle = this.ambientLight;
 
-            this.lightContext.globalAlpha = 1;
+            this.lightTexture.context.globalAlpha = 1;
 
             if(distanceSqr > this.attenuation*this.attenuation)
             {
@@ -130,19 +119,19 @@ LightLayer.prototype.render = function(context) {
                 return
             }
 
-            this.lightContext.beginPath();
+            this.lightTexture.context.beginPath();
 
             var distance = 500;
 
-            this.lightContext.fillStyle = this.ambientLight;
+            this.lightTexture.context.fillStyle = this.ambientLight;
 
-            this.lightContext.globalAlpha = 1;
+            this.lightTexture.context.globalAlpha = 1;
 
-            this.drawSegment(closest.x, closest.y, points[0].x, points[0].y);
+            this.drawSegment(this.lightTexture.context, closest.x, closest.y, points[0].x, points[0].y);
 
-            this.drawSegment(closest.x, closest.y, points[1].x, points[1].y);
+            this.drawSegment(this.lightTexture.context, closest.x, closest.y, points[1].x, points[1].y);
 
-            this.lightContext.closePath();
+            this.lightTexture.context.closePath();
 
             tilesInRange.push({ obj: obj, alpha: 1 - distanceSqr/(this.attenuation*this.attenuation) } );
         }
@@ -150,16 +139,16 @@ LightLayer.prototype.render = function(context) {
     }.bind(this));
 
     tilesInRange.forEach(function(tile) {
-        this.lightContext.fillStyle = this.lightColor;
+        this.lightTexture.context.fillStyle = this.lightColor;
 
-        this.lightContext.globalAlpha = tile.alpha/2;
+        this.lightTexture.context.globalAlpha = tile.alpha/2;
 
-        this.lightContext.fillRect(tile.obj.x, tile.obj.y, tile.obj.width, tile.obj.height);
+        this.lightTexture.context.fillRect(tile.obj.x, tile.obj.y, tile.obj.width, tile.obj.height);
     }.bind(this));
 
-    this.lightContext.fillStyle = this.ambientLight;
+    this.lightTexture.context.fillStyle = this.ambientLight;
 
-    this.lightContext.setTransform(1, 0, 0, 1, 1, 1);
+    this.lightTexture.context.setTransform(1, 0, 0, 1, 1, 1);
 
     var oldBlendingMode = context.globalCompositeOperation;
 
@@ -167,25 +156,25 @@ LightLayer.prototype.render = function(context) {
 
     context.globalCompositeOperation = 'multiply';
 
-    context.drawImage(this.lightCanvas, this.x, this.y, this.lightCanvas.width, this.lightCanvas.height);
+    this.lightTexture.render(context);
 
     context.globalCompositeOperation = oldBlendingMode;
 }
 
-LightLayer.prototype.drawSegment = function(x1, y1, x2, y2) {
+LightLayer.prototype.drawSegment = function(context, x1, y1, x2, y2) {
     var distance = 500;
 
-    this.lightContext.moveTo(x1, y1);
+    context.moveTo(x1, y1);
 
-    this.lightContext.lineTo(x2, y2);
+    context.lineTo(x2, y2);
 
-    this.lightContext.lineTo(x2 + (x2 - this.lightingPos.x)*distance, y2 + (y2 - this.lightingPos.y)*distance);
+    context.lineTo(x2 + (x2 - this.lightingPos.x)*distance, y2 + (y2 - this.lightingPos.y)*distance);
 
-    this.lightContext.lineTo(x1 + (x1 - this.lightingPos.x)*distance, y1 + (y1 - this.lightingPos.y)*distance);
+    context.lineTo(x1 + (x1 - this.lightingPos.x)*distance, y1 + (y1 - this.lightingPos.y)*distance);
 
-    this.lightContext.lineTo(x1, y1);
+    context.lineTo(x1, y1);
 
-    this.lightContext.fill();
+    context.fill();
 }
 
 LightLayer.prototype.getClosestPoint = function(points, source)
