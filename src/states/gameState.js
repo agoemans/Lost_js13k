@@ -32,11 +32,6 @@ Game.prototype.enter = function (config) {
 };
 
 Game.prototype.levelLoaded = function (renderList) {
-    for(var i = 0; i < renderList.length; i++){
-        if(renderList[i] instanceof BrickSprite){
-            this.add(renderList[i]);
-        }
-    }
 
     this.lightLayer = new LightLayer(this.level);
 
