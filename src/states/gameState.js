@@ -31,13 +31,13 @@ Game.prototype.enter = function (config) {
     gameOverHelper.register(this.showGameOver, this);
 };
 
-Game.prototype.levelLoaded = function (renderList) {
+Game.prototype.levelLoaded = function (room) {
 
     this.lightLayer = new LightLayer(this.level);
 
     this.add(this.lightLayer);
 
-    this.player = new Player(150,150);
+    this.player = new Player((room.x + room.w / 2)*this.level.tileSize , (room.y + room.h / 2)*this.level.tileSize);
 
     this.add(this.player);
 

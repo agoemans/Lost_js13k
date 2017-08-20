@@ -37,9 +37,11 @@ inherit(Level, Object);
 Level.prototype.load = function (number, onCompleteCallback, ctx) {
     var that = this;
     gridCreator.create().then(function(result){
-        that.levelLoaded(result);
+        that.levelLoaded(result.grid);
 
-        onCompleteCallback.call(ctx);
+        var roomIndex = mathHelper.getRandomNumber(0,result.rooms.length);
+
+        onCompleteCallback.call(ctx, result.rooms[roomIndex]);
     });
 
 }

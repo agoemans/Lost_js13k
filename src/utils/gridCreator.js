@@ -1,3 +1,4 @@
+// Based on http://bigbadwofl.me/random-dungeon-generator/
 var gridCreator = (function () {
 
     function createBaseGrid(outerArr, innerArr) {
@@ -152,7 +153,7 @@ var gridCreator = (function () {
             var rooms = [];
 
             generateRooms(sizeX, sizeY, grid, rooms);
-            resolve(grid);
+            resolve({ grid: grid, rooms: rooms });
         });
     }
 
