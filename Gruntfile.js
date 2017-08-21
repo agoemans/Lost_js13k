@@ -15,19 +15,18 @@ module.exports = function(grunt) {
 			prod:{
 				options: {
 					port: 8001,
-					base:'build/prod',
-					keepalive: true
+					base:'build/prod'
 				}
 			}
 		},
 		watch: {
-			scripts: {
+			dev: {
 				files: ['assets/*.txt', 'assets/*.png', 'assets/*.jpg', '!assets/levels.txt', 'src/**/*.js', 'htmlFile/index.html'],
-				tasks: ['clean:dev',
-                    'uglify:development',
-                    'copy:dev',
-					'clean:compiled'
-				]
+				tasks: ['dev-build']
+            },
+            prod: {
+				files: ['assets/*.txt', 'assets/*.png', 'assets/*.jpg', '!assets/levels.txt', 'src/**/*.js', 'htmlFile/index.html'],
+				tasks: ['prod-build']
 			}
 		},
 		uglify: {
@@ -112,7 +111,7 @@ module.exports = function(grunt) {
 			}
 		},
         clean: {
-            compiled: ["build/compiled.js"],
+            compiled: ["build/compiled.js*"],
             build: ["build/game.zip"],
 			dev: ["build/dev/*"],
 			prod: ["build/prod/*"]
@@ -137,8 +136,8 @@ module.exports = function(grunt) {
 				},
 				options: {
 
-					compilation_level: 'SIMPLE',
-					language_in: 'ECMASCRIPT5_STRICT'
+					compilation_level: 'ADVANCED_OPTIMIZATIONS',
+                    language_in: 'ECMASCRIPT5_STRICT'
 				}
 			}
 		}
@@ -165,15 +164,19 @@ module.exports = function(grunt) {
 			}
 			done();
 		});
-	});
+    });
 
-    grunt.registerTask('dev', [
+    grunt.registerTask('dev-build', [
     	'clean:dev',
         'uglify:development',
         'copy:dev',
-        'connect:dev',
         'clean:compiled',
-        'watch'
+	]);
+
+    grunt.registerTask('dev', [
+        'dev-build',
+        'connect:dev',
+        'watch:dev'
 	]);
 
 	grunt.registerTask('prod-build', [
@@ -186,7 +189,8 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('prod', [
 		'prod-build',
-		'connect:prod'
+        'connect:prod',
+        'watch:prod'
 	]);
 
     grunt.registerTask('13k', [

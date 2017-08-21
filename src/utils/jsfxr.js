@@ -55,9 +55,31 @@ function SfxrParams() {
      * @return If the string successfully parsed
      */
     this.setSettings = function (values) {
-        for (var i = 0; i < 24; i++) {
-            this[String.fromCharCode(97 + i)] = values[i] || 0;
-        }
+
+        this['a'] = values[0] || 0;
+        this['b'] = values[1] || 0;
+        this['c'] = values[2] || 0;
+        this['d'] = values[3] || 0;
+        this['e'] = values[4] || 0;
+        this['f'] = values[5] || 0;
+        this['g'] = values[6] || 0;
+        this['h'] = values[7] || 0;
+        this['i'] = values[8] || 0;
+        this['j'] = values[9] || 0;
+        this['k'] = values[10] || 0;
+        this['l'] = values[11] || 0;
+        this['m'] = values[12] || 0;
+        this['n'] = values[13] || 0;
+        this['o'] = values[14] || 0;
+        this['p'] = values[15] || 0;
+        this['q'] = values[16] || 0;
+        this['r'] = values[17] || 0;
+        this['s'] = values[18] || 0;
+        this['t'] = values[19] || 0;
+        this['u'] = values[20] || 0;
+        this['v'] = values[21] || 0;
+        this['w'] = values[22] || 0;
+        this['x'] = values[23] || 0;
 
         // I moved this here from the reset(true) function
         if (this['c'] < .01) {

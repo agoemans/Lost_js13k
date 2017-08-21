@@ -1,5 +1,5 @@
 function Hud(resources) {
-  
+
     this.resources = resources;
 
     this.hearts = [];
@@ -21,14 +21,14 @@ ctor(Hud);
 
 Hud.prototype.update = function(deltaSeconds) {
 
-    var currentHealth = this.resources.get('health').currentValue;
+    var currentHealth = this.resources.health.currentValue;
 
     for(var i=0; i<3; i++)
     {
         this.hearts[i].frame = i < currentHealth ? 1 : 0
     }
 
-    var currentGoals = this.resources.get('goals').currentValue;
+    var currentGoals = this.resources.goals.currentValue;
     this.goals.text = currentGoals + ' / 3';
 }
 
