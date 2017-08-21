@@ -1,10 +1,12 @@
-function Player(x, y) {
+function Player(x, y, health) {
     Sprite.call(this, x, y, 'assets/character.png', 4, 4);
 
     this.walkSpeed = 200;
     this.moveDirX = 0;
     this.moveDirY = 0;
     this.inputLocked = false;
+
+    this.health = health;
 
     this.numKeys = 0;
 
@@ -38,7 +40,17 @@ Player.prototype.die = function () {
     this.physics = false;
     this.inputLocked = true;
     this.visible = false;
+    this.physics = false;
     this.stop();
+};
+
+Player.prototype.decreaseHealth = function () {
+    console.log('decrease health', this.health);
+    if(this.health.currentValue > 0){
+        this.health.subtract();
+    } else {
+        this.die();
+    }
 };
 
 Player.prototype.stopHorizontal = function () {
@@ -57,7 +69,7 @@ Player.prototype.update = function (deltaSeconds) {
         if (this.moveDirX !== 0) {
             this.flipX = this.moveDirX < 0;
         }
-        
+
         this.velocity.x = this.moveDirX * this.walkSpeed;
 
         this.velocity.y = this.moveDirY * this.walkSpeed;

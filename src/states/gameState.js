@@ -37,7 +37,8 @@ Game.prototype.levelLoaded = function (room) {
 
     this.add(this.lightLayer);
 
-    this.player = new Player((room.x + room.w / 2) * this.level.tileSize, (room.y + room.h / 2) * this.level.tileSize);
+    this.player = new Player((room.x + room.w / 2) * this.level.tileSize, (room.y + room.h / 2) * this.level.tileSize, this.resources.health);
+    Level.instance.player = this.player;
 
     console.log(room);
 

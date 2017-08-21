@@ -18,11 +18,17 @@ inherit(Enemy, Sprite);
 ctor(Enemy);
 
 
-Enemy.prototype.stabPlayer = function (other) {
-    console.log('this.stab player');
+Enemy.prototype.stabPlayer = function () {
+
     if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
+        console.log('this.stab player');
+        Level.instance.player.decreaseHealth();
         Sprite.prototype.collide.call(this);
         this.collided = true;
+    }
+
+    if (this.collided && !this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
+        this.collided = false;
     }
 };
 
@@ -34,12 +40,10 @@ Enemy.prototype.moveUpDown = function () {
 
     if (this.colliding.top && this.velocity.y >= 0) {
         this.moveDirY = 1;
-        // this.velocity.y = this.moveDirY * this.walkSpeed;
     }
 
     if (this.colliding.bottom && this.velocity.y <= 0) {
         this.moveDirY = -1;
-        // this.velocity.y = this.moveDirY * this.walkSpeed;
     }
 
     this.velocity.y = this.moveDirY * this.walkSpeed;
@@ -49,12 +53,10 @@ Enemy.prototype.moveLeftRight = function () {
 
     if (this.colliding.right && this.velocity.x >= 0) {
         this.moveDirX = -1;
-        // this.velocity.x = this.moveDirX * this.walkSpeed;
     }
 
     if (this.colliding.left && this.velocity.x <= 0) {
         this.moveDirX = 1;
-        // this.velocity.x = this.moveDirX * this.walkSpeed;
     }
     this.velocity.x = this.moveDirX * this.walkSpeed;
 };
@@ -65,16 +67,6 @@ Enemy.prototype.move = function () {
     } else {
         this.moveLeftRight();
     }
-
-    // var right = Level.instance.tileAt(this.x + this.width, this.nextTileY);
-    // if (this.colliding.right && this.velocity.x > 0) {
-    //     this.velocity.x = -200;
-    // }
-    //
-    // var left = Level.instance.tileAt(this.x, this.nextTileY);
-    // if (this.colliding.left && this.velocity.x < 0) {
-    //     this.velocity.x = 200;
-    // }
 };
 
 
@@ -83,7 +75,7 @@ Enemy.prototype.update = function (deltaSeconds) {
         this.move();
     }
 
-    // this.stabPlayer();
+    this.stabPlayer();
 
     Sprite.prototype.update.call(this, deltaSeconds);
 };

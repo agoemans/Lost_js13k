@@ -7,7 +7,7 @@ function Resource(maxValue, startValue) {
 ctor(Resource);
 
 Resource.prototype.canAdd = function(amount) {
-    
+
     return (this.currentValue + amount <= this.maxValue)
 }
 
@@ -15,6 +15,10 @@ Resource.prototype.add = function(amount) {
     this.currentValue += amount
 
     this.currentValue = Math.min(this.currentValue, this.maxValue)
+}
+
+Resource.prototype.subtract = function() {
+    this.currentValue -= this.currentValue | 0;
 }
 
 Resource.prototype.canUse = function(amount) {
@@ -25,5 +29,5 @@ Resource.prototype.use = function(amount) {
     if(this.canUse()) {
         this.currentValue -= amount
     }
-    
+
 }
