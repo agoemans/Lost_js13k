@@ -18,6 +18,8 @@ function ParticleEmitter(x, y, lifeTime) {
 
 inherit(ParticleEmitter, Object);
 
+ctor(ParticleEmitter);
+
 ParticleEmitter.prototype.emit = function (x, y, color) {
     this.color = color || this.color;
     this.particles.forEach(function (particle) {
@@ -59,5 +61,3 @@ ParticleEmitter.prototype.render = function (context) {
     //context.setTransform(1,0,0,1,0,0);
     context.globalAlpha = 1;
 };
-
-ctor(ParticleEmitter);

@@ -1,11 +1,12 @@
 function State() {
+    BaseObject.call(this);
     this.renderList = [];
     this.currentMouseOver = null;
 
     this.camera = new Camera();
 };
 
-inherit(State, Object);
+inherit(State, BaseObject);
 
 State.prototype.enter = function () {};
 
@@ -55,7 +56,7 @@ State.prototype.mouseUp = function (x, y) {
 State.prototype.mouseDown = function (x, y) {
     for (var i = this.renderList.length - 1; i >= 0; i--) {
         var obj = this.renderList[i];
-        
+
         if (obj.interactable && obj.contains(x, y)) {
             obj.mouseDown();
             return;
@@ -76,7 +77,7 @@ State.prototype.mouseMove = function (x, y) {
 
     for (var i = this.renderList.length - 1; i >= 0; i--) {
         var obj = this.renderList[i];
-        
+
         if (obj.interactable && obj.contains(x, y)) {
             obj.mouseOver();
             this.currentMouseOver = obj;

@@ -46,7 +46,6 @@ module.exports = function(grunt) {
 				options: {
 					mangle: true,
 					compress: {
-						//TODO: Optimize using compressor options (https://github.com/mishoo/UglifyJS2#compressor-options)
 					},
 					sourceMap: false
 				},
@@ -105,7 +104,6 @@ module.exports = function(grunt) {
 					{expand: true, flatten: true, src: ['assets/*.png'], dest: 'build/prod/assets'},
 					{expand: true, flatten: true, src: ['assets/*.jpg'], dest: 'build/prod/assets'},
                     {expand: true, flatten: true, src: ['assets/level1.txt'], dest: 'build/prod/assets', filter: 'isFile'},
-                    //{expand: true, flatten: true, src: ['build/compiled.js'], dest: 'build/prod/src', filter: 'isFile'},
                     {expand: true, flatten: true, src: ['htmlFile/index.html'], dest: 'build/prod', filter: 'isFile'}
                 ]
 			}
@@ -136,7 +134,7 @@ module.exports = function(grunt) {
 				},
 				options: {
 
-					compilation_level: 'ADVANCED_OPTIMIZATIONS',
+					compilation_level: 'ADVANCED',
                     language_in: 'ECMASCRIPT5_STRICT'
 				}
 			}

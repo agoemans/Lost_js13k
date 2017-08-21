@@ -1,4 +1,7 @@
 function GameObject(x, y) {
+
+    BaseObject.call(this);
+
     this.x = x;
     this.y = y;
     this.width = 0;
@@ -12,7 +15,9 @@ function GameObject(x, y) {
     this.onMouseUp = null;
 };
 
-inherit(GameObject, Object);
+inherit(GameObject, BaseObject);
+
+ctor(GameObject);
 
 GameObject.prototype.update = function (deltaSeconds) {
 
@@ -50,4 +55,3 @@ GameObject.prototype.contains = function (x, y) {
     return false;
 };
 
-ctor(GameObject);
