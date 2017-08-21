@@ -12,19 +12,29 @@ function Enemy(config) {
     this.canMove = true;
     this.physics = true;
     this.gravity = 0;
+
+    this.stabTimer = 0;
 };
 
 inherit(Enemy, Sprite);
 ctor(Enemy);
 
 
-Enemy.prototype.stabPlayer = function () {
+Enemy.prototype.stabPlayer = function (deltaSeconds) {
+
+    if(this.stabTimer > 0)
+    {
+        this.stabTimer -= deltaSeconds;
+        return;
+    }
 
     if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
         console.log('this.stab player');
         Level.instance.player.decreaseHealth();
         Sprite.prototype.collide.call(this);
         this.collided = true;
+
+        this.stabTimer = 2;
     }
 
     if (this.collided && !this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
@@ -75,7 +85,7 @@ Enemy.prototype.update = function (deltaSeconds) {
         this.move();
     }
 
-    this.stabPlayer();
+    this.stabPlayer(deltaSeconds);
 
     Sprite.prototype.update.call(this, deltaSeconds);
 };

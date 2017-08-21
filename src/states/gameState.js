@@ -38,11 +38,11 @@ Game.prototype.levelLoaded = function (room) {
     this.add(this.lightLayer);
 
     this.player = new Player((room.x + room.w / 2) * this.level.tileSize, (room.y + room.h / 2) * this.level.tileSize, this.resources.health);
-    Level.instance.player = this.player;
+    this.level.player = this.player;
 
     console.log(room);
 
-    this.add(this.player);
+    //this.add(this.player);
 
     this.effectsLayer = new EffectsLayer(this.level.tilesX * this.level.tilesY / 10, this.camera, this.level);
 

@@ -12,13 +12,15 @@ Resource.prototype.canAdd = function(amount) {
 }
 
 Resource.prototype.add = function(amount) {
-    this.currentValue += amount
+    this.currentValue += amount;
 
-    this.currentValue = Math.min(this.currentValue, this.maxValue)
+    this.currentValue = Math.min(this.currentValue, this.maxValue);
 }
 
-Resource.prototype.subtract = function() {
-    this.currentValue -= this.currentValue | 0;
+Resource.prototype.subtract = function(amount) {
+    this.currentValue -= amount;
+
+    this.currentValue = Math.max(this.currentValue, 0);
 }
 
 Resource.prototype.canUse = function(amount) {
