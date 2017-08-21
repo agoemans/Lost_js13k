@@ -55,11 +55,11 @@ var gridCreator = (function () {
 
             roomB.doorsTo.push(roomA);
 
-            pointA = {
+            var pointA = {
                 x: mathHelper.getRandomNumber(roomA.x, roomA.x + roomA.w),
                 y: mathHelper.getRandomNumber(roomA.y, roomA.y + roomA.h)
             };
-            pointB = {
+            var pointB = {
                 x: mathHelper.getRandomNumber(roomB.x, roomB.x + roomB.w),
                 y: mathHelper.getRandomNumber(roomB.y, roomB.y + roomB.h)
             };
