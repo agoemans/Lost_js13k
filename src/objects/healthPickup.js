@@ -3,14 +3,14 @@ function HealthPickup(x, y, resources) {
 
     game.audio.add('key', 1, [[0, , 0.0289, 0.5117, 0.151, 0.7819, , , , , , , , , , , , , 1, , , , , 0.3]]);
 
-    this.healthResource = resources.get('health')
+    this.healthResource = resources.health;
 };
 
 inherit(HealthPickup, Sprite);
 ctor(HealthPickup);
 
 HealthPickup.prototype.collide = function (other) {
-    
+
     if (!(other instanceof Player))
         return;
 
@@ -18,7 +18,7 @@ HealthPickup.prototype.collide = function (other) {
     {
         this.collides = false;
         this.destroy();
-        
+
         this.healthResource.add(1);
 
         game.audio.play('key');

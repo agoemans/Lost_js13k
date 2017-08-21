@@ -36,6 +36,10 @@ Array.prototype.remove = function (object) {
     this.splice(this.indexOf(object), 1);
 };
 
+Array.prototype.contains = function (object) {
+    return this.indexOf(object) !== -1;
+};
+
 var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = decodeURIComponent(window.location.search.substring(1)),
         sURLVariables = sPageURL.split('&'),

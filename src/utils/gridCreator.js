@@ -8,19 +8,18 @@ var gridCreator = (function () {
         for (var x = 0; x < outerArr; x++) {
             var innerList = [];
             for (var y = 0; y < innerArr; y++) {
-                innerList.push('Y');
+                innerList.push('X');
             }
             outerList.push(innerList);
         }
-       // console.log('base grid', outerList);
         return outerList;
     }
 
     function generateRooms(sizeX, sizeY, map, rooms)
     {
-        var room_count = mathHelper.getRandomNumber(50, 100);
-        var min_size = 5;
-        var max_size = 10;
+        var room_count = mathHelper.getRandomNumber(40, 60);
+        var min_size = 4;
+        var max_size = 12;
 
         for (var i = 0; i < room_count; i++) {
             var room = {};
@@ -29,6 +28,8 @@ var gridCreator = (function () {
             room.y = mathHelper.getRandomNumber(1, sizeY - max_size - 1);
             room.w = mathHelper.getRandomNumber(min_size, max_size);
             room.h = mathHelper.getRandomNumber(min_size, max_size);
+
+            room.doorsTo = [];
 
             if (doesCollide(room, -1, rooms)) {
                 i--;
@@ -40,19 +41,29 @@ var gridCreator = (function () {
             rooms.push(room);
         }
 
-        //squashRooms(rooms);
-
         for (i = 0; i < room_count; i++) {
             var roomA = rooms[i];
+
             var roomB = findClosestRoom(roomA, rooms);
-            pointA = {
+
+            if(roomA.doorsTo.contains(roomB))
+            {
+                continue;
+            }
+
+            roomA.doorsTo.push(roomB);
+
+            roomB.doorsTo.push(roomA);
+
+            var pointA = {
                 x: mathHelper.getRandomNumber(roomA.x, roomA.x + roomA.w),
                 y: mathHelper.getRandomNumber(roomA.y, roomA.y + roomA.h)
             };
-            pointB = {
+            var pointB = {
                 x: mathHelper.getRandomNumber(roomB.x, roomB.x + roomB.w),
                 y: mathHelper.getRandomNumber(roomB.y, roomB.y + roomB.h)
             };
+
             while ((pointB.x != pointA.x) || (pointB.y != pointA.y)) {
                 if (pointB.x != pointA.x) {
                     if (pointB.x > pointA.x) pointB.x--;
@@ -63,25 +74,25 @@ var gridCreator = (function () {
                     else pointB.y++;
                 }
 
-                map[pointB.x][pointB.y] = '_';
+                map[pointB.y][pointB.x] = '_';
             }
         }
 
         for (i = 0; i < room_count; i++) {
             var room = rooms[i];
-            for (var x = room.x; x < room.x + room.w; x++) {
-                for (var y = room.y; y < room.y + room.h; y++) {
-                    map[x][y] = '_';
+            for (var y = room.y; y < room.y + room.h; y++) {
+                for (var x = room.x; x < room.x + room.w; x++) {
+                    map[y][x] = '_';
                 }
             }
         }
 
-        for (var x = 0; x < sizeX; x++) {
-            for (var y = 0; y < sizeY; y++) {
-                if (map[x][y] == '_') {
-                    for (var xx = x - 1; xx <= x + 1; xx++) {
-                        for (var yy = y - 1; yy <= y + 1; yy++) {
-                            if (map[xx][yy] == 'Y') map[xx][yy] = 'W';
+        for (var y = 0; y < sizeY; y++) {
+            for (var x = 0; x < sizeX; x++) {
+                if (map[y][x] == '_') {
+                    for (var yy = y - 1; yy <= y + 1; yy++) {
+                        for (var xx = x - 1; xx <= x + 1; xx++) {
+                            if (map[yy][xx] == 'X') map[yy][xx] = 'Y';
                         }
                     }
                 }
@@ -112,28 +123,6 @@ var gridCreator = (function () {
         return closest;
     }
 
-    function squashRooms (rooms) {
-        for (var i = 0; i < 10; i++) {
-            for (var j = 0; j < rooms.length; j++) {
-                var room = rooms[j];
-                while (true) {
-                    var old_position = {
-                        x: room.x,
-                        y: room.y
-                    };
-                    if (room.x > 1) room.x--;
-                    if (room.y > 1) room.y--;
-                    if ((room.x == 1) && (room.y == 1)) break;
-                    if (doesCollide(room, j, rooms)) {
-                        room.x = old_position.x;
-                        room.y = old_position.y;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     function doesCollide (room, ignore, rooms) {
         for (var i = 0; i < rooms.length; i++) {
             if (i == ignore) continue;
@@ -145,7 +134,7 @@ var gridCreator = (function () {
     }
 
     function createGrid(sizeX, sizeY) {
-        //too refactor this to helper
+
         return new Promise(function (resolve, reject) {
 
             var grid = createBaseGrid(sizeX, sizeY);

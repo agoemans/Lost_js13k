@@ -1,7 +1,5 @@
 function Level(resources) {
     this.tileSize = 64;
-    this.xOffset = 1;
-    this.yOffset = 1;
     this.respawnTime = 1;
     this.active = false;
     this.frames = 0;
@@ -27,6 +25,8 @@ function Level(resources) {
 
     this.tileCreator = new TileCreator();
 
+    this.miniMapTexture = null;
+
     game.audio.add('win', 1, [[0, , 0.52, 0.39, 0.27, 0.35, , 0.12, , 0.14, 0.56, 0.2085, 0.673, , , , , , 1, , , , , 0.3]]);
 
     Level.instance = this;
@@ -37,12 +37,15 @@ inherit(Level, Object);
 Level.prototype.load = function (number, onCompleteCallback, ctx) {
     var that = this;
     gridCreator.create().then(function(result){
+
+        this.rooms = result.rooms;
+
         that.levelLoaded(result.grid);
 
         var roomIndex = mathHelper.getRandomNumber(0,result.rooms.length);
 
-        onCompleteCallback.call(ctx, result.rooms[roomIndex]);
-    });
+        onCompleteCallback.call(ctx, result.rooms[0]);
+    }.bind(this));
 
 }
 
@@ -54,25 +57,24 @@ Level.prototype.levelLoaded = function (data) {
 }
 
 Level.prototype.processLevel = function () {
-    console.log('process level');
-    this.tilesX = this.tiles[0].length + 2;
-    this.tilesY = this.tiles.length + 2;
 
-    for (var y = 0; y < this.tilesY; y++) {
-        this.tileObects[y] = [];
-        for (var x = 0; x < this.tilesX; x++) {
-            if (x === 0 || x === this.tilesX - 1 || y === 0 || y === this.tilesY - 1)
-                this.addTile('Y', x, y);
-        }
-    }
+    this.tilesX = this.tiles[0].length;
+    this.tilesY = this.tiles.length;
+
+    this.miniMapScale = 2;
+    this.miniMapTexture = new RenderTexture(game.width - this.tilesX*this.miniMapScale, game.height - this.tilesY*this.miniMapScale, this.tilesX*this.miniMapScale, this.tilesY*this.miniMapScale);
+
+    this.miniMapTexture.context.fillStyle = "#ffffff";
+
+    this.miniMapTexture.context.fillRect(0,0,this.miniMapTexture.wdith,this.miniMapTexture.height);
 
     for (var y = 0; y < this.tiles.length; y++) {
+
         var row = this.tiles[y];
+
         for (var x = 0; x < row.length; x++) {
-            var newX = x + this.xOffset;
-            var newY = y + this.yOffset;
             var tile = row[x];
-            this.addTile(tile, newX, newY);
+            this.addTile(tile, x, y);
         }
     }
 
@@ -101,18 +103,25 @@ Level.prototype.addTile = function (char, x, y) {
     var pX = x * this.tileSize;
     var pY = y * this.tileSize;
 
-    //create brick obj first
+    if(char === 'Y')
+    {
+        this.miniMapTexture.context.fillStyle = "#000000";
+    }
+    else if(char === 'E')
+    {
+        this.miniMapTexture.context.fillStyle = "#ffff00";
+    }
+    else if(char === '_')
+    {
+        this.miniMapTexture.context.fillStyle = "#00ffff";
+    }
+
+
+    this.miniMapTexture.context.fillRect(this.miniMapScale*x, this.miniMapScale*y, this.miniMapScale, this.miniMapScale);
+
     object = this.tileCreator.createTile({
         type: char, x: pX, y: pY, row: x, col: y, resources: this.resources
     });
-
-    if (object instanceof BrickSprite){
-        object.setAltImg();
-        var self = this;
-        object.onClick = function(){
-            object.onClickBrick(self.tileObects);
-        }
-    }
 
     if (object instanceof Enemy){
         this.enemies.push(object);
@@ -120,6 +129,11 @@ Level.prototype.addTile = function (char, x, y) {
 
     if (object) {
         this.renderList.push(object);
+
+        if(!this.tileObects[y])
+        {
+            this.tileObects[y] = [];
+        }
 
         this.tileObects[y][x] = object;
 
@@ -238,7 +252,6 @@ Level.prototype.render = function (context) {
 
     if (this.player)
         this.player.render(context);
-
 };
 
 ctor(Level);
