@@ -24,9 +24,11 @@ Menu.prototype.enter = function () {
     this.playButton.onClick = function () {
         var levelStr = localStorage[game.keyName] || 1;
         var topLevel = parseInt(levelStr);
+        //todo change how levels are assigned
+        var level = mathHelper.getRandomNumber(1, 4);
 
         game.audio.play('start');
-        game.goto("game", {level: topLevel});
+        game.goto("game", {level: level});
     };
 
     text = new Label(canvasWidth / 2 - 130, canvasHeight - 40, 20, "Trebuchet MS", "by David & Amy Goemans");

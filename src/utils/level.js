@@ -5,6 +5,8 @@ function Level(resources) {
     this.frames = 0;
     this.goal = null;
 
+    this.levelNumber = 1;
+
     this.player = null;
     this.enemies = [];
 
@@ -36,6 +38,7 @@ inherit(Level, Object);
 
 Level.prototype.load = function (number, onCompleteCallback, ctx) {
     var that = this;
+    this.levelNumber = number;
     gridCreator.create().then(function(result){
 
         this.rooms = result.rooms;
@@ -144,19 +147,18 @@ Level.prototype.addTile = function (char, x, y) {
 };
 
 Level.prototype.levelFailed = function () {
-    var player = Level.instance.player;
-    Level.instance.particles.emit(player.x + player.width / 2, player.y + player.height / 2, '#AAAAAA');
-    Level.instance.player.die();
+    console.error('level failed');
     var levelStr = localStorage[game.keyName] || 1;
     var topLevel = parseInt(levelStr);
 
+    game.popup({title: "GameOVer", lines: ['Game over! Try again!']});
 
     // TODO:
     // Show lose popup
     //
     setTimeout(function () {
-        // game.goto("game", {level: topLevel});
-    }.bind(this), Level.instance.respawnTime * 1000);
+        game.goto("game", {level: topLevel});
+    }.bind(this), 1000);
 };
 
 Level.prototype.levelComplete = function (x, y) {

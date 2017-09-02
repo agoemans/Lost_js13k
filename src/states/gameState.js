@@ -5,13 +5,13 @@ function Game() {
 
     this.level = null;
     this.cameraOffset = 0;
-    this.gameOverPopup = null;
     this.gameOver = false;
 };
 
 inherit(Game, State);
 
 Game.prototype.enter = function (config) {
+    console.error('game start');
 
     this.clear();
 
@@ -56,12 +56,11 @@ Game.prototype.levelLoaded = function (room, rooms) {
 Game.prototype.showGameOver = function () {
     //todo clear arrays, create a shutdown function
     this.gameOver = true;
-    game.popup({title: "GameOVer", lines: ['Game over! Try again!'], permanent: true});
+   // this.level.levelFailed();
 };
 
 Game.prototype.mouseUp = function (x, y) {
     if (this.gameOver) {
-        game.goto("game");
         this.gameOver = false;
     }
     else {
@@ -115,6 +114,10 @@ Game.prototype.update = function (deltaSeconds) {
     State.prototype.update.call(this, deltaSeconds);
 
     this.hud.update(deltaSeconds);
+
+    if(Level.instance.player.health.currentValue === 0) {
+        gameOverHelper.execute();
+    }
 };
 
 Game.prototype.render = function (context) {

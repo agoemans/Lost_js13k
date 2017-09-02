@@ -41,6 +41,7 @@ Player.prototype.die = function () {
     this.inputLocked = true;
     this.visible = false;
     this.physics = false;
+    this.collides = false;
     this.stop();
 };
 

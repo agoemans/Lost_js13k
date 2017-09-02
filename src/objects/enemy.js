@@ -1,5 +1,5 @@
-function Enemy(x, y) {
-    Sprite.call(this, x, y, 'assets/enemy1.png');
+function Enemy(x, y, imgNum) {
+    Sprite.call(this, x, y, 'assets/enemy' + imgNum + '.png');
     this.collided = false;
 
     this.walkSpeed = 65;
@@ -21,6 +21,7 @@ ctor(Enemy);
 
 
 Enemy.prototype.stabPlayer = function (deltaSeconds) {
+    if(!Level.instance.player.collides) return;
 
     if(this.stabTimer > 0)
     {
@@ -29,7 +30,7 @@ Enemy.prototype.stabPlayer = function (deltaSeconds) {
     }
 
     if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
-        console.log('this.stab player');
+        console.log('this.stab player', Level.instance.player);
         Level.instance.player.decreaseHealth();
         Sprite.prototype.collide.call(this);
         this.collided = true;

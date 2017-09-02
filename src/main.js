@@ -67,8 +67,7 @@ var game = (function () {
                 module.overlay.leave();
                 module.overlay = null;
             }, 1000);
-        }
-        else
+        } else
             module.activeState.mouseUp(x, y);
     };
 
