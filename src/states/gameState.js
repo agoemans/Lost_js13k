@@ -31,7 +31,7 @@ Game.prototype.enter = function (config) {
     gameOverHelper.register(this.showGameOver, this);
 };
 
-Game.prototype.levelLoaded = function (room) {
+Game.prototype.levelLoaded = function (room, rooms) {
 
     this.lightLayer = new LightLayer(this.level);
 
@@ -39,6 +39,8 @@ Game.prototype.levelLoaded = function (room) {
 
     this.player = new Player((room.x + room.w / 2) * this.level.tileSize, (room.y + room.h / 2) * this.level.tileSize, this.resources.health);
     this.level.player = this.player;
+
+    this.level.enemies = enemyGenerator.placeEnemies(rooms, this.level.tileSize);
 
     console.log(room);
 

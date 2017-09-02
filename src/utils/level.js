@@ -44,7 +44,7 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 
         var roomIndex = mathHelper.getRandomNumber(0,result.rooms.length);
 
-        onCompleteCallback.call(ctx, result.rooms[0]);
+        onCompleteCallback.call(ctx, result.rooms[0], result.rooms);
     }.bind(this));
 
 }

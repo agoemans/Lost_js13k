@@ -143,7 +143,7 @@ var gridCreator = (function () {
 
             generateRooms(sizeX, sizeY, grid, rooms);
 
-            enemyGenerator.placeEnemies(rooms, grid);
+            // enemyGenerator.placeEnemies(rooms, grid);
 
             resolve({ grid: grid, rooms: rooms });
         });

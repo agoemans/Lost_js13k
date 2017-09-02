@@ -1,5 +1,5 @@
-function Enemy(config) {
-    Sprite.call(this, config.x, config.y, 'assets/enemy1.png');
+function Enemy(x, y) {
+    Sprite.call(this, x, y, 'assets/enemy1.png');
     this.collided = false;
 
     this.walkSpeed = 65;
