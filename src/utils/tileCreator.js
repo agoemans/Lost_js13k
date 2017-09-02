@@ -18,10 +18,10 @@ TileCreator.prototype.createTile = function (config) {
             this.tile = BrickSprite;
             console.log('E');
             break;
-        case 'G':
-            this.tile = Goal;
-            console.log('G');
-            break;
+        // case 'G':
+        //     this.tile = Goal;
+        //     console.log('G');
+        //     break;
         case 'H':
             this.tile = Door;
             break;

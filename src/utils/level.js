@@ -9,6 +9,7 @@ function Level(resources) {
 
     this.player = null;
     this.enemies = [];
+    this.items = [];
 
     this.width = 0;
     this.height = 0;
@@ -45,7 +46,10 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 
         that.levelLoaded(result.grid);
 
-        var roomIndex = mathHelper.getRandomNumber(0,result.rooms.length);
+        //create stuff
+        // var teleport = new Teleport(that.player.x + 15, that.player.y + 15, that.resources);
+        // teleport.onActivate = this.teleportPlayer();
+        // this.enemies.push(teleport);
 
         onCompleteCallback.call(ctx, result.rooms[0], result.rooms);
     }.bind(this));
@@ -54,9 +58,17 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 
 Level.prototype.levelLoaded = function (data) {
     this.tiles = data;
-    goalHelper.setGoalsInArray(this.tiles);
+    //todo delete golas if other goals work
+   // goalHelper.setGoalsInArray(this.tiles);
     this.processLevel();
 
+}
+
+Level.prototype.teleportPlayer = function () {
+    var index = mathHelper.getRandomNumber(0, Level.instance.rooms.length);
+    var roomObj = Level.instance.rooms[index];
+    Level.instance.player.x =  (roomObj.x) * Level.instance.tileSize;
+    Level.instance.player.y =  (roomObj.y) * Level.instance.tileSize;
 }
 
 Level.prototype.processLevel = function () {
@@ -220,6 +232,10 @@ Level.prototype.update = function (deltaSeconds) {
         obj.update(deltaSeconds);
     });
 
+    this.items.forEach(function (obj) {
+        obj.update(deltaSeconds);
+    });
+
     if (this.key)
         this.key.update(deltaSeconds);
 
@@ -249,6 +265,10 @@ Level.prototype.render = function (context) {
     });
 
     this.enemies.forEach(function (obj) {
+        obj.render(context);
+    });
+
+    this.items.forEach(function (obj) {
         obj.render(context);
     });
 

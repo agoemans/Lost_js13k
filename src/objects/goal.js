@@ -1,8 +1,9 @@
-function Goal(config) {
-    Sprite.call(this, config.x, config.y, 'assets/goal.jpg');
-    this.goalResource = config.resources.goals;
+function Goal(x, y, resources) {
+    Sprite.call(this, x, y, 'assets/book.jpg');
+    this.frame = 1;
+    this.goalResource = resources.goals;
     this.onGoalReached = null;
-    this.baseY = config.y;
+    this.baseY = y;
 };
 
 inherit(Goal, Sprite);
@@ -11,7 +12,8 @@ Goal.prototype.collide = function (other) {
     this.collides = false;
     // this.destroy();
     this.goalResource.add(1);
-    this.image.src = 'assets/underWall.jpg';
+
+    // this.image.src = 'assets/underWall.jpg';
     if (this.onGoalReached) this.onGoalReached(this.x + this.width / 2, this.y + this.height / 2);
 };
 

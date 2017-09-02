@@ -1,5 +1,7 @@
 function HealthPickup(x, y, resources) {
-    Sprite.call(this, x, y, 'assets/key.png');
+    Sprite.call(this, x, y, 'assets/heart.png');
+    this.collided = false;
+    // this.physics = false;
 
     game.audio.add('key', 1, [[0, , 0.0289, 0.5117, 0.151, 0.7819, , , , , , , , , , , , , 1, , , , , 0.3]]);
 
@@ -11,17 +13,26 @@ ctor(HealthPickup);
 
 HealthPickup.prototype.collide = function (other) {
 
-    if (!(other instanceof Player))
-        return;
+    if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
+        // this.collided = true;
+        if(this.healthResource.canAdd(1)) {
+            // this.destroy();
 
-    if(this.healthResource.canAdd(1))
-    {
-        this.collides = false;
-        this.destroy();
+            this.healthResource.add(1);
 
-        this.healthResource.add(1);
-
-        game.audio.play('key');
+            game.audio.play('key');
+        }
     }
 
+
+
 };
+
+HealthPickup.prototype.update = function (deltaSeconds) {
+    //this.y = this.baseY + this.height * Math.sin(this.time * 3) * 0.2;
+    Sprite.prototype.update.call(this, deltaSeconds);
+
+    this.collide();
+};
+
+ctor(HealthPickup);
