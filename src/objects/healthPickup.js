@@ -1,5 +1,5 @@
 function HealthPickup(x, y, resources) {
-    Sprite.call(this, x, y, 'assets/heart.png');
+    Sprite.call(this, x, y, 'assets/heartPickup.png');
     this.collided = false;
     // this.physics = false;
 
@@ -14,9 +14,11 @@ ctor(HealthPickup);
 HealthPickup.prototype.collide = function (other) {
 
     if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
-        // this.collided = true;
+        console.log('heart collide player');
+        this.collided = true;
         if(this.healthResource.canAdd(1)) {
-            // this.destroy();
+            this.visible = false;
+            this.inputLocked = true;
 
             this.healthResource.add(1);
 
