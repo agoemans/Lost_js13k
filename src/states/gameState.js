@@ -40,6 +40,7 @@ Game.prototype.levelLoaded = function (room, rooms) {
     this.player = new Player((room.x + room.w / 2) * this.level.tileSize, (room.y + room.h / 2) * this.level.tileSize, this.resources.health);
     this.level.player = this.player;
 
+    console.log('player', room, this.level.tileSize, this.player);
     //todo move this to level
     this.level.enemies = enemyGenerator.placeEnemies(rooms, this.level.tileSize);
 
@@ -158,6 +159,14 @@ Game.prototype.render = function (context) {
         context.fillStyle = "#ff00ff";
 
         context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.player.x / this.level.tileSize, this.level.miniMapTexture.y + this.level.miniMapScale * this.player.y / this.level.tileSize, this.level.miniMapScale, this.level.miniMapScale);
+
+        //todo for debugging only
+        for(var i = 0; i < this.level.items.length; i++){
+            context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.level.items[i].x / this.level.tileSize,
+                this.level.miniMapTexture.y + this.level.miniMapScale * this.level.items[i].y / this.level.tileSize,
+                this.level.miniMapScale, this.level.miniMapScale);
+        }
+
     }
 
     this.camera.setWorld(context);

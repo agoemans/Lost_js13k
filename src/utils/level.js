@@ -232,9 +232,9 @@ Level.prototype.update = function (deltaSeconds) {
         obj.update(deltaSeconds);
     });
     //
-    // this.items.forEach(function (obj) {
-    //     obj.update(deltaSeconds);
-    // });
+    this.items.forEach(function (obj) {
+        obj.update(deltaSeconds);
+    });
 
     if (this.key)
         this.key.update(deltaSeconds);
@@ -268,9 +268,9 @@ Level.prototype.render = function (context) {
         obj.render(context);
     });
 
-    // this.items.forEach(function (obj) {
-    //     obj.render(context);
-    // });
+    this.items.forEach(function (obj) {
+        obj.render(context);
+    });
 
     if (this.player)
         this.player.render(context);
