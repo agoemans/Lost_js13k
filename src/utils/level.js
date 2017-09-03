@@ -10,6 +10,7 @@ function Level(resources) {
     this.player = null;
     this.enemies = [];
     this.items = [];
+    this.goals = [];
 
     this.width = 0;
     this.height = 0;
@@ -46,15 +47,39 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 
         that.levelLoaded(result.grid);
 
-        //create stuff
-        // var teleport = new Teleport(that.player.x + 15, that.player.y + 15, that.resources);
-        // teleport.onActivate = this.teleportPlayer();
-        // this.enemies.push(teleport);
+        that.createLevelItems(result, that.tileSize, that.resources);
 
         onCompleteCallback.call(ctx, result.rooms[0], result.rooms);
     }.bind(this));
 
-}
+};
+
+Level.prototype.createLevelItems = function(result, tileSize, resources){
+    var rooms = result.rooms;
+    //goals
+    for(var i = 1; i < 4; i++){
+        var roomObj = rooms[i];
+        var goal = new Goal((roomObj.x + roomObj.w / 2) * tileSize, (roomObj.y + roomObj.h / 2) * tileSize, resources);
+        goal.onGoalReached = this.updateGoals.bind(this);
+        this.goals.push(goal);
+    }
+
+};
+
+Level.prototype.updateGoals = function(item){
+    //goals
+    for(var i = 0; i < this.goals.length; i++){
+        if(this.goals[i] == item) {
+            this.goals.splice(i, 1, item);
+        }
+    }
+
+    if(this.goals.length > 1){
+        this.goals[0].beaconOn = true;
+    }
+
+};
+
 
 Level.prototype.levelLoaded = function (data) {
     this.tiles = data;
@@ -236,6 +261,10 @@ Level.prototype.update = function (deltaSeconds) {
         obj.update(deltaSeconds);
     });
 
+    this.goals.forEach(function (obj) {
+        obj.update(deltaSeconds);
+    });
+
     if (this.key)
         this.key.update(deltaSeconds);
 
@@ -269,6 +298,10 @@ Level.prototype.render = function (context) {
     });
 
     this.items.forEach(function (obj) {
+        obj.render(context);
+    });
+
+    this.goals.forEach(function (obj) {
         obj.render(context);
     });
 

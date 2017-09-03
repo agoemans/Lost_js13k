@@ -1,7 +1,7 @@
 var itemGenerator = (function () {
     function create(rooms, tileSize, resources){
-        // item setlist: goals, hearts, teleports
-        var itemSetList = [3, mathHelper.getRandomNumber(3, 6), mathHelper.getRandomNumber(2, 4)];
+        // item setlist: hearts, teleports
+        var itemSetList = [mathHelper.getRandomNumber(3, 6), mathHelper.getRandomNumber(2, 4)];
 
         for (var i = 0; i <= itemSetList.length; i++){
             for (var j = 0; j <= itemSetList[i]; j++){
@@ -30,13 +30,12 @@ var itemGenerator = (function () {
 
         switch(index){
             case 0:
-                item = Goal;
-                imgNum = mathHelper.getRandomNumber(1, 4);
-                break;
-            case 1:
+                // item = Goal;
+                // imgNum = mathHelper.getRandomNumber(1, 4);
+                // break;
                 item = HealthPickup;
                 break;
-            case 2:
+            case 1:
                 item = Teleport;
                 break;
 

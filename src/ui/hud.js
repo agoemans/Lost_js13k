@@ -6,6 +6,8 @@ function Hud(resources) {
 
     this.goals = null;
 
+    this.goalsImg = new Sprite(canvasWidth - 150, 15, 'assets/scroll.png', 1);
+
     for(var i=0; i<3; i++)
     {
         var heart = new Sprite(20 + i * 40, 20, 'assets/heart.png', 2);
@@ -38,4 +40,6 @@ Hud.prototype.render = function(context) {
     });
 
     this.goals.render(context);
+
+    this.goalsImg.render(context);
 }

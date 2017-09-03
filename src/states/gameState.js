@@ -46,21 +46,7 @@ Game.prototype.levelLoaded = function (room, rooms) {
 
     itemGenerator.placeItems(rooms, this.level.tileSize, this.resources);
 
-    //todo move this to items generator
-    // for (var i = 0; i < 3; i++){
-    //     var index = mathHelper.getRandomNumber(0, rooms.length);
-    //     var roomObj = rooms[index];
-    //     var teleport = new Teleport(roomObj.x + 25, roomObj.y + 15, this.level.resources);
-    //     teleport.onActivate = this.level.teleportPlayer;
-    //     this.level.enemies.push(teleport);
-    // }
-    //
-    // var heart = new HealthPickup((room.x + room.w / 2) * this.level.tileSize, (room.y + room.h / 2) * this.level.tileSize + 30, this.level.resources);
-    // this.level.enemies.push(heart);
-    // console.log('this.player', this.player);
-    // console.log('heart', heart);
-    //
-    // this.level.items = itemGenerator.placeItems(rooms, this.level.tileSize, this.resources);
+    // this.level.goals = goalCreator.createGoals(rooms, this.level.tileSize, this.resources);
 
     console.log(room);
 
@@ -165,6 +151,15 @@ Game.prototype.render = function (context) {
             context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.level.items[i].x / this.level.tileSize,
                 this.level.miniMapTexture.y + this.level.miniMapScale * this.level.items[i].y / this.level.tileSize,
                 this.level.miniMapScale, this.level.miniMapScale);
+        }
+
+        for(var i = 0; i < this.level.goals.length; i++){
+            if(this.level.goals[i].beaconOn){
+                context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.level.goals[i].x / this.level.tileSize,
+                    this.level.miniMapTexture.y + this.level.miniMapScale * this.level.goals[i].y / this.level.tileSize,
+                    this.level.miniMapScale, this.level.miniMapScale);
+            }
+
         }
 
     }
