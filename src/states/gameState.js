@@ -147,17 +147,18 @@ Game.prototype.render = function (context) {
         context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.player.x / this.level.tileSize, this.level.miniMapTexture.y + this.level.miniMapScale * this.player.y / this.level.tileSize, this.level.miniMapScale, this.level.miniMapScale);
 
         //todo for debugging only
-        for(var i = 0; i < this.level.items.length; i++){
-            context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.level.items[i].x / this.level.tileSize,
-                this.level.miniMapTexture.y + this.level.miniMapScale * this.level.items[i].y / this.level.tileSize,
-                this.level.miniMapScale, this.level.miniMapScale);
-        }
+        // for(var i = 0; i < this.level.items.length; i++){
+        //     context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.level.items[i].x / this.level.tileSize,
+        //         this.level.miniMapTexture.y + this.level.miniMapScale * this.level.items[i].y / this.level.tileSize,
+        //         this.level.miniMapScale, this.level.miniMapScale);
+        // }
 
         for(var i = 0; i < this.level.goals.length; i++){
+            // console.log('beacon', this.level.goals[i].beaconOn);
             if(this.level.goals[i].beaconOn){
-                context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.level.goals[i].x / this.level.tileSize,
-                    this.level.miniMapTexture.y + this.level.miniMapScale * this.level.goals[i].y / this.level.tileSize,
-                    this.level.miniMapScale, this.level.miniMapScale);
+                var goalX = this.level.miniMapTexture.x + this.level.miniMapScale * this.level.goals[i].x / this.level.tileSize;
+                var goalY = this.level.miniMapTexture.y + this.level.miniMapScale * this.level.goals[i].y / this.level.tileSize;
+                this.level.goals[i].drawOnMap(context, goalX, goalY, this.level.goals[i].radiusOnMap);
             }
 
         }

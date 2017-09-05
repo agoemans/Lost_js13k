@@ -1,11 +1,14 @@
 function Goal(x, y, resources) {
     Sprite.call(this, x, y, 'assets/scroll.png');
+    console.log('create goal', x, y)
     this.goalResource = resources.goals;
     this.onGoalReached = null;
     this.baseY = y;
     this.collided = false;
     this.isPickedUp = false;
     this.beaconOn = false;
+    this.radiusOnMap = 0;
+    this.alpha = 1;
 };
 
 inherit(Goal, Sprite);
@@ -29,9 +32,33 @@ Goal.prototype.collide = function (other) {
 
 };
 
+Goal.prototype.drawOnMap = function(context, goalX, goalY, radius){
+    // context.clearRect(goalX, goalY, 100, 100);
+    // console.log('radius', radius);
+    context.beginPath();
+    context.arc(goalX, goalY, this.radiusOnMap, 0, 2 * Math.PI);
+    context.closePath();
+    context.fillStyle = 'rgba(152, 8, 8,' + this.alpha + ')';
+    context.fill();
+
+};
+
 Goal.prototype.update = function (deltaSeconds) {
     this.y = this.baseY + this.height * Math.sin(this.time * 3) * 0.2;
     Sprite.prototype.update.call(this, deltaSeconds);
+
+    this.radiusOnMap += 10 * deltaSeconds;
+
+    this.alpha -= 1 * deltaSeconds;
+
+    if(this.alpha <= 0){
+        this.alpha = 1;
+    }
+
+    if(this.radiusOnMap >= 10)
+    {
+        this.radiusOnMap = 0;
+    }
 
     this.collide();
 };

@@ -57,10 +57,12 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 Level.prototype.createLevelItems = function(result, tileSize, resources){
     var rooms = result.rooms;
     //goals
-    for(var i = 1; i < 4; i++){
+    for(var i = 0; i < 3; i++){
+        //todo randomize rooms
         var roomObj = rooms[i];
         var goal = new Goal((roomObj.x + roomObj.w / 2) * tileSize, (roomObj.y + roomObj.h / 2) * tileSize, resources);
         goal.onGoalReached = this.updateGoals.bind(this);
+        if(i == 0) goal.beaconOn = true;
         this.goals.push(goal);
     }
 
@@ -69,14 +71,17 @@ Level.prototype.createLevelItems = function(result, tileSize, resources){
 Level.prototype.updateGoals = function(item){
     //goals
     for(var i = 0; i < this.goals.length; i++){
+        console.log('this.goals[i] == item', this.goals[i] == item);
         if(this.goals[i] == item) {
-            this.goals.splice(i, 1, item);
+            this.goals.splice(i, 1);
         }
     }
 
-    if(this.goals.length > 1){
+    if(this.goals.length !== 0){
         this.goals[0].beaconOn = true;
     }
+
+    console.log('update goals, this.goals', this.goals);
 
 };
 
