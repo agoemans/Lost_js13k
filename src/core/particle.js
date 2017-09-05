@@ -8,7 +8,9 @@ function Particle(x, y, w, h, vx, vy) {
     this.velocity = {x: vx, y: vy};
 };
 
-inherit(Particle, Object);
+inherit(Particle, GameObject);
+
+ctor(Particle);
 
 Particle.prototype.destroy = function () {
     Level.instance.removeAt(this.x, this.y);
@@ -24,5 +26,3 @@ Particle.prototype.update = function (deltaSeconds) {
 Particle.prototype.render = function (context) {
     context.fillRect(this.x, this.y, this.width, this.height);
 };
-
-ctor(Particle);
