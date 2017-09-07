@@ -11,12 +11,10 @@ TileCreator.prototype.createTile = function (config) {
     switch (config.type) {
         case 'Y':
             this.tile = OuterWallSprite;
-            console.log('Y');
             break;
         case 'W':
         case 'E':
             this.tile = BrickSprite;
-            console.log('E');
             break;
         // case 'G':
         //     this.tile = Goal;

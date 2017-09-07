@@ -29,7 +29,7 @@ DungeonGenerator.prototype.generateRooms = function(width, height, grid, rooms)
 
     for (var i = 0; i < roomCount; i++)
     {
-        var room = this.createRoom(this.WIDTH, this.HEIGHT);
+        var room = this.createRoom(width, height);
 
         if (this.roomOverlaps(room))
         {
@@ -39,11 +39,16 @@ DungeonGenerator.prototype.generateRooms = function(width, height, grid, rooms)
 
         rooms.push(room);
 
-        for(var y = room.y; y < room.y + room.h; y++)
+        var roomStartX = room.x-1;
+        var roomStartY = room.y-1;
+        var roomEndX = room.x+room.w+1;
+        var roomEndY = room.y+room.h+1;
+
+        for(var y = roomStartY; y < roomEndY+1; y++)
         {
-            for(var x = room.x; x < room.x + room.w; x++)
+            for(var x = roomStartX; x < roomEndX+1; x++)
             {
-                if(x === room.x || x === room.x + room.w - 1 || y === room.y || y === room.y + room.h -1)
+                if(x === roomStartX || x === roomEndX || y === roomStartY || y === roomEndY)
                 {
                     grid[y][x] = 'Y';
                 }
@@ -58,20 +63,41 @@ DungeonGenerator.prototype.generateRooms = function(width, height, grid, rooms)
 
     rooms.forEach(function(room){
 
-        var other = this.getClosestRoom(room, rooms);
-
-        if(!other.doorsTo.contains(room))
+        for(var i=0; i<2; i++)
         {
+            var other = this.getClosestRoomWithNoDoorsToMe(room, rooms);
+            
             this.createCorridor(room,other,grid);
-
+            
             other.doorsTo.push(room);
-            room.doorsTo.push(other);
+
+            room.doorsTo.push(other);        
         }
 
     }, this);
+
+    for (var y = 0; y < height; y++) 
+    {
+        for (var x = 0; x < width; x++) 
+        {
+            if (grid[y][x] === '_' || grid[y][x] === 'H') 
+            {
+                for (var yy = y - 1; yy <= y + 1; yy++) 
+                {
+                    for (var xx = x - 1; xx <= x + 1; xx++) 
+                    {
+                        if (grid[yy][xx] === 'X') 
+                        {
+                            grid[yy][xx] = 'Y';
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
-DungeonGenerator.prototype.getClosestRoom = function(room, rooms)
+DungeonGenerator.prototype.getClosestRoomWithNoDoorsToMe = function(room, rooms)
 {
     var mid = {
         x: room.x + (room.w / 2),
@@ -79,16 +105,19 @@ DungeonGenerator.prototype.getClosestRoom = function(room, rooms)
     };
 
     var closest = null;
-    var closest_distance = 1000;
+    var closest_distance = Infinity;
     for (var i = 0; i < rooms.length; i++) {
         var check = rooms[i];
-        if (check == room) continue;
+        if (check == room || check.doorsTo.contains(room)) continue;
         var check_mid = {
             x: check.x + (check.w / 2),
             y: check.y + (check.h / 2)
         };
-        var distance = Math.min(Math.abs(mid.x - check_mid.x) - (room.w / 2) - (check.w / 2), Math.abs(mid.y - check_mid.y) - (room.h / 2) - (check.h / 2));
-        if (distance < closest_distance) {
+        var distance = (mid.x - check_mid.x)*(mid.x - check_mid.x) + 
+                        (mid.y - check_mid.y)*(mid.y - check_mid.y);
+
+        if (distance < closest_distance) 
+        {
             closest_distance = distance;
             closest = check;
         }
@@ -104,8 +133,8 @@ DungeonGenerator.prototype.createRoom = function(gridWidth, gridHeight)
 
     var room = {};
 
-    room.x = mathHelper.getRandomNumber(1, gridWidth - maxSize - 1);
-    room.y = mathHelper.getRandomNumber(1, gridHeight - maxSize - 1);
+    room.x = mathHelper.getRandomNumber(1, gridWidth - maxSize - 2);
+    room.y = mathHelper.getRandomNumber(1, gridHeight - maxSize - 2);
     room.w = mathHelper.getRandomNumber(minSize, maxSize);
     room.h = mathHelper.getRandomNumber(minSize, maxSize);
 
@@ -118,7 +147,9 @@ DungeonGenerator.prototype.roomOverlaps = function(room)
 {
     for(var i=0; i<this.rooms.length; i++)
     {
-        if(mathHelper.rectOverlaps(room, this.rooms[i]))
+        // Room with padding
+        var expandedRoom = { x: room.x - 3, y: room.y - 3, w: room.w + 6, h: room.h + 6 };
+        if(mathHelper.rectOverlaps(expandedRoom, this.rooms[i]))
         {
             return true;
         }
@@ -130,24 +161,32 @@ DungeonGenerator.prototype.roomOverlaps = function(room)
 DungeonGenerator.prototype.createCorridor = function(roomA, roomB, grid)
 {
     var pointA = {
-        x: mathHelper.getRandomNumber(roomA.x+1, roomA.x + roomA.w-1),
-        y: mathHelper.getRandomNumber(roomA.y+1, roomA.y + roomA.h-1),
+        x: mathHelper.getRandomNumber(roomA.x+1, roomA.x + roomA.w-2),
+        y: mathHelper.getRandomNumber(roomA.y+1, roomA.y + roomA.h-2),
     };
 
     var pointB = {
-        x: mathHelper.getRandomNumber(roomB.x, roomB.x + roomB.w),
-        y: mathHelper.getRandomNumber(roomB.y, roomB.y + roomB.h),
+        x: mathHelper.getRandomNumber(roomB.x + 1, roomB.x + roomB.w-2),
+        y: mathHelper.getRandomNumber(roomB.y + 1, roomB.y + roomB.h-2),
     };
 
 
     while ((pointB.x != pointA.x) || (pointB.y != pointA.y)) {
+
+        // TODO: door direciton
+        var dir = null;
+
         if (pointB.x != pointA.x) {
             if (pointB.x > pointA.x) pointB.x--;
             else pointB.x++;
+
+            dir = 'x';
         }
         else if (pointB.y != pointA.y) {
             if (pointB.y > pointA.y) pointB.y--;
             else pointB.y++;
+
+            dir = 'y';
         }
 
         if(grid[pointB.y][pointB.x] === 'Y')
@@ -169,7 +208,7 @@ DungeonGenerator.prototype.create = function()
 
         this.rooms = [];
 
-        this.generateRooms(this.WIDTH, this.height, this.grid, this.rooms);
+        this.generateRooms(this.WIDTH, this.HEIGHT, this.grid, this.rooms);
 
         resolve({ grid: this.grid, rooms: this.rooms });
     }.bind(this));
