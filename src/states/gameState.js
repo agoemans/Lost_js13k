@@ -142,9 +142,11 @@ Game.prototype.render = function (context) {
     {
         this.level.miniMapTexture.render(context);
 
-        context.fillStyle = "#ff00ff";
+        context.fillStyle = "#ff0000";
 
         context.fillRect(this.level.miniMapTexture.x + this.level.miniMapScale * this.player.x / this.level.tileSize, this.level.miniMapTexture.y + this.level.miniMapScale * this.player.y / this.level.tileSize, this.level.miniMapScale, this.level.miniMapScale);
+
+        context.fillStyle = "#ff00ff";
 
         //todo for debugging only
         for(var i = 0; i < this.level.items.length; i++){

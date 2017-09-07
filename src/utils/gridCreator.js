@@ -17,7 +17,7 @@ var gridCreator = (function () {
 
     function generateRooms(sizeX, sizeY, map, rooms)
     {
-        var room_count = mathHelper.getRandomNumber(40, 60);
+        var room_count = mathHelper.getRandomNumber(20, 40);
         var min_size = 4;
         var max_size = 12;
 
@@ -41,6 +41,7 @@ var gridCreator = (function () {
             rooms.push(room);
         }
 
+        // Make corridors
         for (i = 0; i < room_count; i++) {
             var roomA = rooms[i];
 
@@ -55,14 +56,12 @@ var gridCreator = (function () {
 
             roomB.doorsTo.push(roomA);
 
-            var pointA = {
-                x: mathHelper.getRandomNumber(roomA.x, roomA.x + roomA.w),
-                y: mathHelper.getRandomNumber(roomA.y, roomA.y + roomA.h)
-            };
-            var pointB = {
-                x: mathHelper.getRandomNumber(roomB.x, roomB.x + roomB.w),
-                y: mathHelper.getRandomNumber(roomB.y, roomB.y + roomB.h)
-            };
+            var pointA = makeDoorPoint(roomA);
+            var pointB = makeDoorPoint(roomB);
+
+            map[pointB.y][pointB.x] = 'H';
+
+            map[pointA.y][pointA.x] = 'H';
 
             while ((pointB.x != pointA.x) || (pointB.y != pointA.y)) {
                 if (pointB.x != pointA.x) {
@@ -74,10 +73,14 @@ var gridCreator = (function () {
                     else pointB.y++;
                 }
 
-                map[pointB.y][pointB.x] = '_';
+                if(map[pointB.y][pointB.x] !== 'H')
+                {
+                    map[pointB.y][pointB.x] = '_';
+                }
             }
         }
 
+        // Make floors
         for (i = 0; i < room_count; i++) {
             var room = rooms[i];
             for (var y = room.y; y < room.y + room.h; y++) {
@@ -98,6 +101,39 @@ var gridCreator = (function () {
                 }
             }
         }
+    }
+
+    function makeDoorPoint(room)
+    {
+        var projection = Math.random() * 4;
+
+        var left = Math.random() > 0.5;
+
+        var x =  mathHelper.getRandomNumber(room.x, room.x + room.w);
+
+        var y = mathHelper.getRandomNumber(room.y, room.y + room.h);
+
+        if(projection < 1)
+        {
+            x = room.x;
+        }
+        else if(projection < 2)
+        {
+            x = room.x + room.w;
+        }
+        else if(projection < 3)
+        {
+            y = room.y;
+        }
+        else if(projection < 4)
+        {
+            y = room.y + room.h;
+        }
+
+        return {
+            x: x,
+            y: y
+        };
     }
 
     function findClosestRoom(room, rooms) {
@@ -142,8 +178,6 @@ var gridCreator = (function () {
             var rooms = [];
 
             generateRooms(sizeX, sizeY, grid, rooms);
-
-            // enemyGenerator.placeEnemies(rooms, grid);
 
             resolve({ grid: grid, rooms: rooms });
         });
