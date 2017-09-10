@@ -153,15 +153,7 @@ Game.prototype.render = function (context) {
         //         this.level.miniMapScale, this.level.miniMapScale);
         // }
 
-        for(var i = 0; i < this.level.goals.length; i++){
-            // console.log('beacon', this.level.goals[i].beaconOn);
-            if(this.level.goals[i].beaconOn){
-                var goalX = this.level.miniMapTexture.x + this.level.miniMapScale * this.level.goals[i].x / this.level.tileSize;
-                var goalY = this.level.miniMapTexture.y + this.level.miniMapScale * this.level.goals[i].y / this.level.tileSize;
-                this.level.goals[i].drawOnMap(context, goalX, goalY, this.level.goals[i].radiusOnMap);
-            }
-
-        }
+        this.level.goals.drawOnMap(context, this.level.miniMapTexture, this.level.miniMapScale, this.level.tileSize);
 
     }
 

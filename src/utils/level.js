@@ -10,7 +10,7 @@ function Level(resources) {
     this.player = null;
     this.enemies = [];
     this.items = [];
-    this.goals = [];
+    this.goals =  new Goals();
 
     this.width = 0;
     this.height = 0;
@@ -47,44 +47,13 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 
         that.levelLoaded(result.grid);
 
-        that.createLevelItems(result, that.tileSize, that.resources);
+        // that.createLevelItems(result, that.tileSize, that.resources);
+        that.goals.create(result, that.tileSize, that.resources);
 
         onCompleteCallback.call(ctx, result.rooms[0], result.rooms);
     }.bind(this));
 
 };
-
-Level.prototype.createLevelItems = function(result, tileSize, resources){
-    var rooms = result.rooms;
-    //goals
-    for(var i = 0; i < 3; i++){
-        //todo randomize rooms
-        var roomObj = rooms[i];
-        var goal = new Goal((roomObj.x + roomObj.w / 2) * tileSize, (roomObj.y + roomObj.h / 2) * tileSize, resources);
-        goal.onGoalReached = this.updateGoals.bind(this);
-        if(i == 0) goal.beaconOn = true;
-        this.goals.push(goal);
-    }
-
-};
-
-Level.prototype.updateGoals = function(item){
-    //goals
-    for(var i = 0; i < this.goals.length; i++){
-        console.log('this.goals[i] == item', this.goals[i] == item);
-        if(this.goals[i] == item) {
-            this.goals.splice(i, 1);
-        }
-    }
-
-    if(this.goals.length !== 0){
-        this.goals[0].beaconOn = true;
-    }
-
-    console.log('update goals, this.goals', this.goals);
-
-};
-
 
 Level.prototype.levelLoaded = function (data) {
     this.tiles = data;
@@ -95,6 +64,7 @@ Level.prototype.levelLoaded = function (data) {
 }
 
 Level.prototype.teleportPlayer = function () {
+    //todo move this to helper
     var index = mathHelper.getRandomNumber(0, Level.instance.rooms.length);
     var roomObj = Level.instance.rooms[index];
     Level.instance.player.x =  (roomObj.x) * Level.instance.tileSize;
@@ -266,9 +236,7 @@ Level.prototype.update = function (deltaSeconds) {
         obj.update(deltaSeconds);
     });
 
-    this.goals.forEach(function (obj) {
-        obj.update(deltaSeconds);
-    });
+    this.goals.update(deltaSeconds);
 
     if (this.key)
         this.key.update(deltaSeconds);
@@ -306,9 +274,7 @@ Level.prototype.render = function (context) {
         obj.render(context);
     });
 
-    this.goals.forEach(function (obj) {
-        obj.render(context);
-    });
+    this.goals.render(context);
 
     if (this.player)
         this.player.render(context);
