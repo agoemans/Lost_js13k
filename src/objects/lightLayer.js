@@ -28,6 +28,12 @@ function LightLayer(level) {
     this.ambientLight = '#15171f';
 
     this.lightColor = '#ffeedd';
+
+    this.lightAlpha = 1;
+
+    this.scale = 1;
+
+    this.elapsed = 0;
 };
 
 
@@ -69,7 +75,17 @@ LightLayer.prototype.renderLightRadius = function() {
     }
 
     this.pointLightTexture.context.closePath();
- }
+}
+
+LightLayer.prototype.update = function(deltaSeconds)
+{
+    this.elapsed += deltaSeconds;
+
+    this.lightAlpha = 0.8 + 0.1 * Math.cos(this.elapsed*2) + Math.random()*0.1;
+
+    this.scale = 1.0 + 0.1 * Math.cos(this.elapsed*2) + Math.random()*0.1;
+
+}
 
 LightLayer.prototype.render = function(context) {
 
@@ -84,7 +100,11 @@ LightLayer.prototype.render = function(context) {
         this.renderLightRadius();
     }
 
+    this.lightTexture.context.globalAlpha = this.lightAlpha;
+
     this.pointLightTexture.render(this.lightTexture.context);
+
+    this.lightTexture.context.globalAlpha = 1;
 
     this.lightTexture.context.setTransform(1, 0, 0, 1, -this.x, -this.y);
 
