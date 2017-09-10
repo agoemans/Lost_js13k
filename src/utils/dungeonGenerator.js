@@ -50,6 +50,8 @@ DungeonGenerator.prototype.generateRooms = function(width, height, grid, rooms)
             {
                 if(x === roomStartX || x === roomEndX || y === roomStartY || y === roomEndY)
                 {
+                    room.wallTiles.push({x: x, y: y});
+
                     grid[y][x] = 'Y';
                 }
                 else
@@ -66,27 +68,27 @@ DungeonGenerator.prototype.generateRooms = function(width, height, grid, rooms)
         for(var i=0; i<2; i++)
         {
             var other = this.getClosestRoomWithNoDoorsToMe(room, rooms);
-            
+
             this.createCorridor(room,other,grid);
-            
+
             other.doorsTo.push(room);
 
-            room.doorsTo.push(other);        
+            room.doorsTo.push(other);
         }
 
     }, this);
 
-    for (var y = 0; y < height; y++) 
+    for (var y = 0; y < height; y++)
     {
-        for (var x = 0; x < width; x++) 
+        for (var x = 0; x < width; x++)
         {
-            if (grid[y][x] === '_' || grid[y][x] === 'H') 
+            if (grid[y][x] === '_' || grid[y][x] === 'H')
             {
-                for (var yy = y - 1; yy <= y + 1; yy++) 
+                for (var yy = y - 1; yy <= y + 1; yy++)
                 {
-                    for (var xx = x - 1; xx <= x + 1; xx++) 
+                    for (var xx = x - 1; xx <= x + 1; xx++)
                     {
-                        if (grid[yy][xx] === 'X') 
+                        if (grid[yy][xx] === 'X')
                         {
                             grid[yy][xx] = 'Y';
                         }
@@ -113,10 +115,10 @@ DungeonGenerator.prototype.getClosestRoomWithNoDoorsToMe = function(room, rooms)
             x: check.x + (check.w / 2),
             y: check.y + (check.h / 2)
         };
-        var distance = (mid.x - check_mid.x)*(mid.x - check_mid.x) + 
+        var distance = (mid.x - check_mid.x)*(mid.x - check_mid.x) +
                         (mid.y - check_mid.y)*(mid.y - check_mid.y);
 
-        if (distance < closest_distance) 
+        if (distance < closest_distance)
         {
             closest_distance = distance;
             closest = check;
@@ -140,6 +142,8 @@ DungeonGenerator.prototype.createRoom = function(gridWidth, gridHeight)
 
     room.doorsTo = [];
 
+    room.wallTiles = [];
+
     return room;
 }
 
@@ -158,6 +162,89 @@ DungeonGenerator.prototype.roomOverlaps = function(room)
     return false;
 }
 
+DungeonGenerator.prototype.getClosestTiles = function(tiles, point)
+{
+    var closest = [];
+
+    var closestDistanceSqr = Infinity;
+
+    for(var i=0; i<tiles.length; i++)
+    {
+        var tile = tiles[i];
+        var distanceSqr = mathHelper.distanceSqr(tile.x, tile.y, point.x, point.y);
+        if(distanceSqr < closestDistanceSqr)
+        {
+            closestDistanceSqr = distanceSqr;
+            closest = [tile];
+        }
+        else if(distanceSqr === closestDistanceSqr)
+        {
+            closest.push(tile);
+        }
+    }
+
+    return closest;
+}
+
+DungeonGenerator.prototype.pathFind = function(startPosition, grid, target, path)
+{
+    if(startPosition.x === target.x && startPosition.y === target.y)
+    {
+        return true;
+    }
+
+    var left = {x:startPosition.x-1,y:startPosition.y};
+    var right = {x:startPosition.x+1,y:startPosition.y};
+    var bottom = {x:startPosition.x,y:startPosition.y-1};
+    var top = {x:startPosition.x,y:startPosition.y+1};
+
+    var tiles = [left,right,bottom,top];
+
+    for(var i=0; i<tiles.length; i++)
+    {
+        var tile = tiles[i];
+
+        if(!path.contains(tile))
+        {
+            var oldDist = mathHelper.distanceSqr(startPosition.x, startPosition.y, target.x, target.y);
+
+            var dist = mathHelper.distanceSqr(tile.x, tile.y, target.x, target.y);
+
+            if(grid[tile.y][tile.x] === 'Y' || grid[tile.y][tile.x] === 'H')
+            {
+                dist += 4;
+            }
+
+            if(grid[tile.y][tile.x] === '_')
+            {
+                dist += 0.5;
+            }
+
+            if(dist < oldDist)
+            {
+                path.push(tile);
+
+                console.log(path, tiles);
+
+                if(this.pathFind(tile, grid, target, path))
+                {
+                    return true;
+                }
+                else
+                {
+                    console.log('pop');
+
+                    path.pop();
+
+                    return false;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
 DungeonGenerator.prototype.createCorridor = function(roomA, roomB, grid)
 {
     var pointA = {
@@ -170,34 +257,39 @@ DungeonGenerator.prototype.createCorridor = function(roomA, roomB, grid)
         y: mathHelper.getRandomNumber(roomB.y + 1, roomB.y + roomB.h-2),
     };
 
+    var path = [];
+    this.pathFind(pointA, grid, pointB, path);
 
-    while ((pointB.x != pointA.x) || (pointB.y != pointA.y)) {
+    path.forEach(function(tile) {
 
-        // TODO: door direciton
-        var dir = null;
+        var foundA = false;
 
-        if (pointB.x != pointA.x) {
-            if (pointB.x > pointA.x) pointB.x--;
-            else pointB.x++;
+        var foundB = false;
 
-            dir = 'x';
-        }
-        else if (pointB.y != pointA.y) {
-            if (pointB.y > pointA.y) pointB.y--;
-            else pointB.y++;
+        roomA.wallTiles.forEach(function(other){
+            if(tile.x === other.x && tile.y === other.y)
+            {
+                foundA = true;
+            }
+        });
 
-            dir = 'y';
-        }
+        roomB.wallTiles.forEach(function(other){
+            if(tile.x === other.x && tile.y === other.y)
+            {
+                foundB = true;
+            }
+        });
 
-        if(grid[pointB.y][pointB.x] === 'Y')
+        if(foundA || foundB)
         {
-            grid[pointB.y][pointB.x] = 'H';
+            grid[tile.y][tile.x] = 'H';
         }
         else
         {
-            grid[pointB.y][pointB.x] = '_';
+            grid[tile.y][tile.x] = '_';
         }
-    }
+
+    }, this);
 }
 
 DungeonGenerator.prototype.create = function()
