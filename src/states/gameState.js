@@ -155,6 +155,8 @@ Game.prototype.render = function (context) {
 
         this.level.goals.drawOnMap(context, this.level.miniMapTexture, this.level.miniMapScale, this.level.tileSize);
 
+        this.level.gemHelper.drawOnMap(context, this.level.miniMapTexture, this.level.miniMapScale, this.level.tileSize);
+
     }
 
     this.camera.setWorld(context);

@@ -11,6 +11,7 @@ function Level(resources) {
     this.enemies = [];
     this.items = [];
     this.goals =  new Goals();
+    this.gemHelper =  new GemHelper();
 
     this.width = 0;
     this.height = 0;
@@ -49,6 +50,10 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 
         // that.createLevelItems(result, that.tileSize, that.resources);
         that.goals.create(result, that.tileSize, that.resources);
+
+        that.gemHelper.create(result, that.tileSize, that.resources);
+
+        that.goals.onGoalsComplete = that.gemHelper.activate.bind(that.gemHelper);
 
         onCompleteCallback.call(ctx, result.rooms[0], result.rooms);
     }.bind(this));
@@ -238,6 +243,8 @@ Level.prototype.update = function (deltaSeconds) {
 
     this.goals.update(deltaSeconds);
 
+    this.gemHelper.update(deltaSeconds);
+
     if (this.key)
         this.key.update(deltaSeconds);
 
@@ -275,6 +282,8 @@ Level.prototype.render = function (context) {
     });
 
     this.goals.render(context);
+
+    this.gemHelper.render(context);
 
     if (this.player)
         this.player.render(context);

@@ -1,8 +1,7 @@
 function Goals() {
     this.goalList = [];
+    this.onGoalsComplete = null;
 }
-//
-// inherit(Goals, Object);
 
 Goals.prototype.create = function (result, tileSize, resources){
     var rooms = result.rooms;
@@ -40,6 +39,10 @@ Goals.prototype.updateList = function (item) {
 
     if(this.goalList.length !== 0){
         this.goalList[0].beaconOn = true;
+    }
+
+    if(this.goalList.length == 0){
+        this.onGoalsComplete(this);
     }
 
     console.log('update goalList, this.goalList', this.goalList);
