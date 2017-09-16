@@ -49,6 +49,10 @@ Sprite.prototype.resetCollision = function () {
     this.colliding.top = this.colliding.bottom = this.colliding.left = this.colliding.right = false;
 };
 
+Sprite.prototype.overlapObject = function (other) {
+    return this.overlap(other.x,other.y,other.width,other.height);
+};
+
 Sprite.prototype.overlap = function (x, y, width, height) {
 
     if (!this.collides)

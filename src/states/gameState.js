@@ -3,6 +3,8 @@ function Game() {
 
     this.resources = new Resources();
 
+    this.collision = new Collision();
+
     this.level = null;
     this.cameraOffset = 0;
     this.gameOver = false;
@@ -33,16 +35,26 @@ Game.prototype.enter = function (config) {
 
 Game.prototype.levelLoaded = function (room, rooms) {
 
+    this.collision.setLevel(this.level);
+
     this.lightLayer = new LightLayer(this.level);
 
     this.add(this.lightLayer);
 
     this.player = new Player((room.x + room.w / 2) * this.level.tileSize, (room.y + room.h / 2) * this.level.tileSize, this.resources.health);
+
+    this.collision.register(this.player, true, true);
+
     this.level.player = this.player;
 
     console.log('player', room, this.level.tileSize, this.player);
     //todo move this to level
     this.level.enemies = enemyGenerator.placeEnemies(rooms, this.level.tileSize);
+
+    this.level.enemies.forEach(function(enemy) {
+        this.collision.register(enemy, true, true);
+    }, this);
+
 
     itemGenerator.placeItems(rooms, this.level.tileSize, this.resources);
 
@@ -112,6 +124,8 @@ Game.prototype.leave = function () {
 Game.prototype.update = function (deltaSeconds) {
 
     this.level.update(deltaSeconds);
+
+    this.collision.resolve();
 
     this.lightLayer.setLightSource(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2);
 
