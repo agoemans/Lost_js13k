@@ -8,10 +8,10 @@ GemHelper.prototype.create = function (result, tileSize, resources){
     var index = mathHelper.getRandomNumber(0, rooms.length);
     var roomObj = rooms[index];
 
-    this.altar = new GemAltar((roomObj.x + roomObj.w / 2) * tileSize, (roomObj.y + roomObj.h / 2) * tileSize, resources);
-    this.gem = new Gem((roomObj.x + roomObj.w / 2) * tileSize, this.altar.height + 5 + this.altar.y);
+    // this.altar = new GemAltar((roomObj.x + roomObj.w / 2) * tileSize, (roomObj.y + roomObj.h / 2) * tileSize, resources);
+    this.gem = new Gem((roomObj.x + roomObj.w / 2) * tileSize, (roomObj.y + roomObj.h / 2) * tileSize, resources);
 
-    this.altar.onGemAltarReached = this.gem.deactivate.bind(this.gem);
+    // this.altar.onGemAltarReached = this.gem.deactivate.bind(this.gem);
 };
 
 GemHelper.prototype.activate = function () {
@@ -19,12 +19,12 @@ GemHelper.prototype.activate = function () {
 };
 
 GemHelper.prototype.update = function (deltaSeconds) {
-    this.altar.update(deltaSeconds);
+    // this.altar.update(deltaSeconds);
     this.gem.update(deltaSeconds);
 };
 
 GemHelper.prototype.render = function (context) {
-    this.altar.render(context);
+    // this.altar.render(context);
     this.gem.render(context);
 };
 

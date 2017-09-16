@@ -1,4 +1,4 @@
-function Gem(x, y) {
+function Gem(x, y, resources) {
     Sprite.call(this, x, y, 'assets/gem1.png');
     console.log('create gem', x, y)
     this.baseY = y;
@@ -7,6 +7,7 @@ function Gem(x, y) {
     this.alpha = 0;
     this.visible = false;
     this.inputLocked = true;
+    this.goalResource = resources.goals;
 };
 
 inherit(Gem, Sprite);
@@ -21,6 +22,27 @@ Gem.prototype.activate = function(){
 Gem.prototype.deactivate = function(){
     this.beaconOn = false;
     this.visible = false;
+    this.inputLocked = true;
+};
+
+Gem.prototype.collide = function (other) {
+    if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
+        console.log('>>>>>>>>>>>>>>>>> gem collide with player');
+
+        //todo add goal resource
+        console.log('!this.goalResource.canAdd(1)', !this.goalResource.canAdd(1));
+
+        if(!this.goalResource.canAdd(1)){
+            this.deactivate();
+        }
+
+        this.collided = true;
+    }
+
+    if (this.collided && !this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
+        this.collided = false;
+    }
+
 };
 
 Gem.prototype.drawOnMap = function(context, goalX, goalY, radius){
@@ -50,6 +72,8 @@ Gem.prototype.update = function (deltaSeconds) {
     {
         this.radiusOnMap = 0;
     }
+
+    this.collide();
 
 };
 
