@@ -47,6 +47,8 @@ Level.prototype.load = function (number, onCompleteCallback, ctx) {
 
         this.rooms = result.rooms;
 
+        this.corridors = result.corridors;
+
         that.levelLoaded(result.grid);
 
         // that.createLevelItems(result, that.tileSize, that.resources);
@@ -82,6 +84,13 @@ Level.prototype.processLevel = function () {
     this.tilesX = this.tiles[0].length;
     this.tilesY = this.tiles.length;
 
+    this.width = this.tilesX * this.tileSize;
+
+    this.height = this.tilesY * this.tileSize;
+
+    this.bgTexture = new RenderTexture(0,0,this.width,this.height);
+
+
     this.miniMapScale = 2;
     this.miniMapTexture = new RenderTexture(game.width - this.tilesX*this.miniMapScale, game.height - this.tilesY*this.miniMapScale, this.tilesX*this.miniMapScale, this.tilesY*this.miniMapScale);
 
@@ -99,24 +108,40 @@ Level.prototype.processLevel = function () {
         }
     }
 
-    this.width = this.tilesX * this.tileSize;
-
-    this.height = this.tilesY * this.tileSize;
-
-    this.bgTexture = new RenderTexture(0,0,this.width,this.height);
-
-    this.bgTexture.context.fillStyle = "#333333";
+    this.bgTexture.context.fillStyle = "#000000";
 
     this.bgTexture.context.fillRect(0, 0, this.tilesX * this.tileSize, this.tilesY * this.tileSize);
 
     this.bgTexture.context.fillStyle = "#5a5a5a";
 
-    for (var i = 0; i < this.tilesX * this.tilesY; i++) {
-        var x = Math.random() * (this.tilesX * this.tileSize - 40) + 20;
-        var y = Math.random() * (this.tilesY * this.tileSize - 40) + 20;
-        var size = Math.random() * 10;
-        this.bgTexture.context.fillRect(x, y, size, size);
-    }
+    this.corridors.forEach(function(corridor){
+
+        corridor.floorTiles.forEach(function(tile){
+
+            this.bgTexture.context.fillStyle = "#3F3333";
+
+            this.bgTexture.context.fillRect(tile.x * this.tileSize, tile.y * this.tileSize, this.tileSize, this.tileSize);
+
+        }, this);
+    }, this);
+
+
+    this.rooms.forEach(function(room){
+
+        this.bgTexture.context.fillStyle = "#3F3333";
+
+        this.bgTexture.context.fillRect(room.x * this.tileSize, room.y * this.tileSize, room.w * this.tileSize, room.h * this.tileSize);
+
+        this.bgTexture.context.fillStyle = "#5a5a5a";
+
+        for (var i = 0; i < room.w * room.h; i++) {
+            var x = Math.random() * room.w * this.tileSize;
+            var y = Math.random() * room.h * this.tileSize;
+            var size = Math.random() * 10;
+            this.bgTexture.context.fillRect(room.x * this.tileSize + x, room.y * this.tileSize + y, size, size);
+        }
+
+    }, this);
 };
 
 Level.prototype.addTile = function (char, x, y) {
@@ -145,7 +170,6 @@ Level.prototype.addTile = function (char, x, y) {
         this.miniMapTexture.context.fillStyle = "#330033";
     }
 
-
     this.miniMapTexture.context.fillRect(this.miniMapScale*x, this.miniMapScale*y, this.miniMapScale, this.miniMapScale);
 
     object = this.tileCreator.createTile({
@@ -153,6 +177,7 @@ Level.prototype.addTile = function (char, x, y) {
     });
 
     if (object) {
+
         this.renderList.push(object);
 
         if(!this.tileObects[y])

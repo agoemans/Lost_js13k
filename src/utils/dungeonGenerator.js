@@ -22,7 +22,7 @@ DungeonGenerator.prototype.createBaseGrid = function(width, height) {
     return outerList;
 }
 
-DungeonGenerator.prototype.generateRooms = function(width, height, roomCount, grid, rooms)
+DungeonGenerator.prototype.generateRooms = function(width, height, roomCount, grid, rooms, corridors)
 {
     for (var i = 0; i < roomCount; i++)
     {
@@ -38,8 +38,8 @@ DungeonGenerator.prototype.generateRooms = function(width, height, roomCount, gr
 
         var roomStartX = room.x-1;
         var roomStartY = room.y-1;
-        var roomEndX = room.x+room.w+1;
-        var roomEndY = room.y+room.h+1;
+        var roomEndX = room.x+room.w;
+        var roomEndY = room.y+room.h;
 
         for(var y = roomStartY; y < roomEndY+1; y++)
         {
@@ -73,7 +73,7 @@ DungeonGenerator.prototype.generateRooms = function(width, height, roomCount, gr
 
         var bestConnection = this.getClosestRoomWithNoDoorsToMe(next, connectedRooms);
 
-        this.createCorridor(next, bestConnection, grid);
+        var corridor = this.createCorridor(next, bestConnection, grid);
 
         next.doorsTo.push(bestConnection);
 
@@ -81,6 +81,7 @@ DungeonGenerator.prototype.generateRooms = function(width, height, roomCount, gr
 
         connectedRooms.push(next);
 
+        corridors.push(corridor);
     }
 
     for (var y = 0; y < height; y++)
@@ -136,7 +137,7 @@ DungeonGenerator.prototype.createRoom = function(gridWidth, gridHeight)
 {
     var minSize = 5;
 
-    var maxSize = 7;
+    var maxSize = 8;
 
     var room = {};
 
@@ -248,6 +249,12 @@ DungeonGenerator.prototype.pathFind = function(startPosition, grid, target, path
 
 DungeonGenerator.prototype.createCorridor = function(roomA, roomB, grid)
 {
+    var corridor = {};
+
+    corridor.rooms = [roomA, roomB];
+
+    corridor.floorTiles = [];
+
     var pointA = {
         x: mathHelper.getRandomNumber(roomA.x+1, roomA.x + roomA.w-2),
         y: mathHelper.getRandomNumber(roomA.y+1, roomA.y + roomA.h-2),
@@ -283,7 +290,11 @@ DungeonGenerator.prototype.createCorridor = function(roomA, roomB, grid)
 
         grid[tile.y][tile.x] = '_';
 
+        corridor.floorTiles.push(tile);
+
     }, this);
+
+    return corridor;
 }
 
 DungeonGenerator.prototype.create = function()
@@ -294,11 +305,13 @@ DungeonGenerator.prototype.create = function()
 
         this.rooms = [];
 
-        var roomCount = mathHelper.getRandomNumber(50, 60);
+        this.corridors = [];
 
-        this.generateRooms(this.WIDTH, this.HEIGHT, roomCount, this.grid, this.rooms);
+        var roomCount = mathHelper.getRandomNumber(50, 55);
 
-        resolve({ grid: this.grid, rooms: this.rooms });
+        this.generateRooms(this.WIDTH, this.HEIGHT, roomCount, this.grid, this.rooms, this.corridors);
+
+        resolve({ grid: this.grid, rooms: this.rooms, corridors: this.corridors });
     }.bind(this));
 }
 
