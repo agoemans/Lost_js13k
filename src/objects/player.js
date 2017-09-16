@@ -14,6 +14,14 @@ function Player(x, y, health) {
 
     this.physics = true;
 
+    this.inventory = new Inventory();
+
+    this.sword = new Sword(this);
+
+    this.inventory.addItem(this.sword, 'weapons');
+
+    this.inventory.equip(this.sword);
+
     this.fps = 10;
 
     game.audio.add('jump', 1, [[0, , 0.22, , 0.1871, 0.3251, , 0.2199, , , , -0.2199, , 0.1513, 0.02, , , , 0.74, , , , -0.02, 0.3]]);
@@ -90,6 +98,14 @@ Player.prototype.update = function (deltaSeconds) {
     }
 
     Sprite.prototype.update.call(this, deltaSeconds);
+
+    this.inventory.update(deltaSeconds);
+};
+
+Player.prototype.render = function (context) {
+    Sprite.prototype.render.call(this, context);
+
+    this.inventory.render(context);
 };
 
 ctor(Player);
