@@ -43,6 +43,7 @@ function Sprite(x, y, image, frameCount, animCount) {
 };
 
 inherit(Sprite, GameObject);
+ctor(Sprite);
 
 Sprite.prototype.resetCollision = function () {
     this.colliding.top = this.colliding.bottom = this.colliding.left = this.colliding.right = false;
@@ -248,5 +249,3 @@ Sprite.prototype.getPoints = function()
 
     return points;
 }
-
-ctor(Sprite);
