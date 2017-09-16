@@ -53,18 +53,7 @@ Sprite.prototype.overlap = function (x, y, width, height) {
     if (!this.collides)
         return false;
 
-
-    var left = this.x;
-    var right = this.x + this.width;
-    var xOver = (left >= x && left <= x + width) || (right >= x && right <= x + width)
-        || (left <= x && right >= x) || (left <= x + width && right >= x + width);
-
-    var top = this.y;
-    var bottom = this.y + this.height;
-    var yOver = (top >= y && top <= y + height) || (bottom >= y && bottom <= y + height)
-        || (top <= y && bottom >= y) || (top <= y + height && bottom >= y + height);
-
-    return xOver && yOver;
+    return mathHelper.overlaps(x,y,width,height,this.x,this.y,this.width,this.height);
 };
 
 Sprite.prototype.doCollision = function (elapsed) {

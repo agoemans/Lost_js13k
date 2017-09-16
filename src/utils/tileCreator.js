@@ -4,19 +4,17 @@ function TileCreator() {
 TileCreator.prototype.tile = BrickSprite;
 
 TileCreator.prototype.createTile = function (config) {
-    if (config.type === '_' || config.type === 'X' || config.type === 0) {
+    if (config.type === '_' || config.type === 'X' || config.type === 0 || config.type === 'C') {
         return null;
     }
 
     switch (config.type) {
         case 'Y':
             this.tile = OuterWallSprite;
-            console.log('Y');
             break;
         case 'W':
         case 'E':
             this.tile = BrickSprite;
-            console.log('E');
             break;
         // case 'G':
         //     this.tile = Goal;

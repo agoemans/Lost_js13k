@@ -42,7 +42,8 @@ inherit(Level, Object);
 Level.prototype.load = function (number, onCompleteCallback, ctx) {
     var that = this;
     this.levelNumber = number;
-    gridCreator.create().then(function(result){
+
+    dungeonGenerator.create().then(function(result){
 
         this.rooms = result.rooms;
 
@@ -135,6 +136,14 @@ Level.prototype.addTile = function (char, x, y) {
     {
         this.miniMapTexture.context.fillStyle = "#00ffff";
     }
+    else if(char === 'X')
+    {
+        this.miniMapTexture.context.fillStyle = "#555555";
+    }
+    else if(char === 'H')
+    {
+        this.miniMapTexture.context.fillStyle = "#330033";
+    }
 
 
     this.miniMapTexture.context.fillRect(this.miniMapScale*x, this.miniMapScale*y, this.miniMapScale, this.miniMapScale);
@@ -142,10 +151,6 @@ Level.prototype.addTile = function (char, x, y) {
     object = this.tileCreator.createTile({
         type: char, x: pX, y: pY, row: x, col: y, resources: this.resources
     });
-
-    if (object instanceof Enemy){
-        this.enemies.push(object);
-    }
 
     if (object) {
         this.renderList.push(object);
@@ -247,20 +252,6 @@ Level.prototype.update = function (deltaSeconds) {
 
     if (this.key)
         this.key.update(deltaSeconds);
-
-    // if (this.goal)
-    //     this.goal.update(deltaSeconds);
-
-    if (!this.active && this.player) {
-        this.frames++;
-        if (this.frames > 3) {
-            this.active = true;
-            this.enemies.forEach(function (obj) {
-                obj.activate();
-            });
-            this.player.activate();
-        }
-    }
 };
 
 Level.prototype.render = function (context) {
