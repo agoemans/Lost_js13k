@@ -97,9 +97,9 @@ Player.prototype.update = function (deltaSeconds) {
         this.stop();
     }
 
-    this.inventory.update(deltaSeconds);
-
     Sprite.prototype.update.call(this, deltaSeconds);
+
+    this.inventory.update(deltaSeconds);
 };
 
 Player.prototype.render = function (context) {
