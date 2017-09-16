@@ -1,8 +1,7 @@
-var enemyGenerator = (function () {
+var trapGenerator = (function () {
     function create(playerRoom, rooms, tileSize){
-        var enemyList = [];
-        // var numOfRooms = Math.floor(rooms.length / 2) + (Math.floor(rooms.length / 4));
-        var numOfRooms = Math.floor(rooms.length - 3);
+        var trapList = [];
+        var numOfRooms = Math.floor(rooms.length / 3);
 
         var minNum = (Level.instance.levelNumber == 1 ? 1 : (Level.instance.levelNumber * 4) - 3);
         var maxNum = Level.instance.levelNumber * 4;
@@ -12,12 +11,13 @@ var enemyGenerator = (function () {
             // var index = mathHelper.getRandomNumber(0, rooms.length);
             // var roomObj = rooms[index];
             var roomObj = getRandomRoom(playerRoom, rooms);
-            var imgNum = mathHelper.getRandomNumber(minNum, maxNum);
-            var enemy = new Enemy((roomObj.x + roomObj.w / 2) * tileSize, (roomObj.y + roomObj.h / 2) * tileSize, imgNum);
-            enemyList.push(enemy);
+            // var imgNum = mathHelper.getRandomNumber(minNum, maxNum);
+            var trap = new Trap((roomObj.x * 2) * tileSize, (roomObj.y * 2) * tileSize);
+            console.log('push to trap list', trap);
+            trapList.push(trap);
         }
 
-        return enemyList;
+        return trapList;
     }
 
     function getRandomRoom(playerRoom, rooms) {
@@ -34,7 +34,7 @@ var enemyGenerator = (function () {
     }
 
     return {
-        placeEnemies: function(playerRoom, rooms, tileSize) {
+        placeTraps: function(playerRoom, rooms, tileSize) {
             return create(playerRoom, rooms, tileSize);
 
         }

@@ -42,13 +42,15 @@ Game.prototype.levelLoaded = function (room, rooms) {
 
     console.log('player', room, this.level.tileSize, this.player);
     //todo move this to level
-    this.level.enemies = enemyGenerator.placeEnemies(rooms, this.level.tileSize);
+    this.level.enemies = enemyGenerator.placeEnemies(room, rooms, this.level.tileSize);
+    this.level.traps = trapGenerator.placeTraps(room, rooms, this.level.tileSize);
 
     itemGenerator.placeItems(rooms, this.level.tileSize, this.resources);
 
     // this.level.goals = goalCreator.createGoals(rooms, this.level.tileSize, this.resources);
 
     console.log(room);
+    console.log(this.level.traps);
 
     //this.add(this.player);
 

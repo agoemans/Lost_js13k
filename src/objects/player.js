@@ -48,7 +48,7 @@ Player.prototype.die = function () {
 };
 
 Player.prototype.decreaseHealth = function () {
-    console.log('decrease health', this.health);
+
     if(this.health.currentValue > 0){
         this.health.subtract(1);
     } else {

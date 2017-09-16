@@ -31,7 +31,6 @@ Goals.prototype.render = function (context) {
 
 Goals.prototype.updateList = function (item) {
     for(var i = 0; i < this.goalList.length; i++){
-        console.log('this.goalList[i] == item', this.goalList[i] == item);
         if(this.goalList[i] == item) {
             this.goalList.splice(i, 1);
         }
@@ -45,7 +44,6 @@ Goals.prototype.updateList = function (item) {
         this.onGoalsComplete(this);
     }
 
-    console.log('update goalList, this.goalList', this.goalList);
 };
 
 Goals.prototype.drawOnMap = function (context, miniMapTexture, miniMapScale, tileSize) {

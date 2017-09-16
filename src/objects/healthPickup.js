@@ -14,7 +14,7 @@ ctor(HealthPickup);
 HealthPickup.prototype.collide = function (other) {
 
     if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
-        console.log('heart collide player');
+
         this.collided = true;
         if(this.healthResource.canAdd(1)) {
             this.visible = false;

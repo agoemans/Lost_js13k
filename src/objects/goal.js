@@ -1,6 +1,5 @@
 function Goal(x, y, resources) {
     Sprite.call(this, x, y, 'assets/scroll.png');
-    console.log('create goal', x, y)
     this.goalResource = resources.goals;
     this.onGoalReached = null;
     this.baseY = y;
@@ -15,7 +14,6 @@ inherit(Goal, Sprite);
 
 Goal.prototype.collide = function (other) {
     if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
-        console.log('Goal collide with player');
         this.isPickedUp = true;
         if(this.beaconOn) this.beaconOn = false;
         this.onGoalReached(this);

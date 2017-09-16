@@ -52,7 +52,6 @@ BrickSprite.prototype.hide = function () {
 };
 
 BrickSprite.prototype.onClickBrick = function (array) {
-    console.log('onClickBrick', this.nearbyBombs);
     this.disableInput();
 
     if(this.hasBomb){

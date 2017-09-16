@@ -10,6 +10,8 @@ function Level(resources) {
     this.player = null;
     this.enemies = [];
     this.items = [];
+    this.traps = [];
+
     this.goals =  new Goals();
     this.gemHelper =  new GemHelper();
 
@@ -266,6 +268,10 @@ Level.prototype.update = function (deltaSeconds) {
     this.enemies.forEach(function (obj) {
         obj.update(deltaSeconds);
     });
+
+    this.traps.forEach(function (obj) {
+        obj.update(deltaSeconds);
+    });
     //
     this.items.forEach(function (obj) {
         obj.update(deltaSeconds);
@@ -290,6 +296,10 @@ Level.prototype.render = function (context) {
     });
 
     this.enemies.forEach(function (obj) {
+        obj.render(context);
+    });
+
+    this.traps.forEach(function (obj) {
         obj.render(context);
     });
 

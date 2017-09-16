@@ -1,6 +1,5 @@
 function Gem(x, y, resources) {
     Sprite.call(this, x, y, 'assets/gem1.png');
-    console.log('create gem', x, y)
     this.baseY = y;
     this.beaconOn = false;
     this.radiusOnMap = 0;
@@ -13,7 +12,6 @@ function Gem(x, y, resources) {
 inherit(Gem, Sprite);
 
 Gem.prototype.activate = function(){
-    console.log('gem activated');
     this.beaconOn = true;
     this.visible = true;
     this.inputLocked = false;

@@ -10,7 +10,6 @@ inherit(Teleport, Sprite);
 
 Teleport.prototype.collide = function (other) {
     if (!this.collided && this.overlap(Level.instance.player.x, Level.instance.player.y, Level.instance.player.width, Level.instance.player.height)) {
-        console.log('T collide with player');
         this.onActivate();
         this.collided = true;
     }
