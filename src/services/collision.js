@@ -51,7 +51,7 @@ Collision.prototype.resolveWorld = function()
         var tile = this.level.tileAt(item.x, item.y);
         if(tile  && !this.containsCollision(this.world.collisions, item, tile) && item.overlapObject(tile))
         {
-            item.collide(tile);
+            item.collided(tile);
 
             this.world.collisions.push({item1: item, item2: tile});
         }
@@ -73,8 +73,8 @@ Collision.prototype.resolveObjects = function()
             {
                 if(item1.overlapObject(item2))
                 {
-                    item1.collide(item2);
-                    item2.collide(item1);
+                    item1.collided(item2);
+                    item2.collided(item1);
 
                     this.object.collisions.push({item1: item1, item2: item2});
                 }
