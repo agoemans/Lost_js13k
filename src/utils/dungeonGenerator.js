@@ -22,11 +22,8 @@ DungeonGenerator.prototype.createBaseGrid = function(width, height) {
     return outerList;
 }
 
-DungeonGenerator.prototype.generateRooms = function(width, height, grid, rooms)
+DungeonGenerator.prototype.generateRooms = function(width, height, roomCount, grid, rooms)
 {
-    var roomCount = mathHelper.getRandomNumber(20, 40);
-
-
     for (var i = 0; i < roomCount; i++)
     {
         var room = this.createRoom(width, height);
@@ -63,20 +60,28 @@ DungeonGenerator.prototype.generateRooms = function(width, height, grid, rooms)
         }
     }
 
-    rooms.forEach(function(room){
+    var remaining = rooms.slice(0);
 
-        for(var i=0; i<2; i++)
-        {
-            var other = this.getClosestRoomWithNoDoorsToMe(room, rooms);
+    var next = remaining.shift();
 
-            this.createCorridor(room,other,grid);
+    var connectedRooms = [next];
 
-            other.doorsTo.push(room);
+    while(next = remaining.shift())
+    {
+        var closest = null;
+        var closestDistanceSqr = Infinity;
 
-            room.doorsTo.push(other);
-        }
+        var bestConnection = this.getClosestRoomWithNoDoorsToMe(next, connectedRooms);
 
-    }, this);
+        this.createCorridor(next, bestConnection, grid);
+
+        next.doorsTo.push(bestConnection);
+
+        bestConnection.doorsTo.push(next);
+
+        connectedRooms.push(next);
+
+    }
 
     for (var y = 0; y < height; y++)
     {
@@ -129,9 +134,9 @@ DungeonGenerator.prototype.getClosestRoomWithNoDoorsToMe = function(room, rooms)
 
 DungeonGenerator.prototype.createRoom = function(gridWidth, gridHeight)
 {
-    var minSize = 4;
+    var minSize = 5;
 
-    var maxSize = 12;
+    var maxSize = 7;
 
     var room = {};
 
@@ -224,16 +229,12 @@ DungeonGenerator.prototype.pathFind = function(startPosition, grid, target, path
             {
                 path.push(tile);
 
-                console.log(path, tiles);
-
                 if(this.pathFind(tile, grid, target, path))
                 {
                     return true;
                 }
                 else
                 {
-                    console.log('pop');
-
                     path.pop();
 
                     return false;
@@ -280,14 +281,7 @@ DungeonGenerator.prototype.createCorridor = function(roomA, roomB, grid)
             }
         });
 
-        if(foundA || foundB)
-        {
-            grid[tile.y][tile.x] = 'H';
-        }
-        else
-        {
-            grid[tile.y][tile.x] = '_';
-        }
+        grid[tile.y][tile.x] = '_';
 
     }, this);
 }
@@ -300,7 +294,9 @@ DungeonGenerator.prototype.create = function()
 
         this.rooms = [];
 
-        this.generateRooms(this.WIDTH, this.HEIGHT, this.grid, this.rooms);
+        var roomCount = mathHelper.getRandomNumber(50, 60);
+
+        this.generateRooms(this.WIDTH, this.HEIGHT, roomCount, this.grid, this.rooms);
 
         resolve({ grid: this.grid, rooms: this.rooms });
     }.bind(this));
